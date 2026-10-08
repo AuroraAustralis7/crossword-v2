@@ -7,32 +7,46 @@ import wordCheck from "./wordCheck.ts";
     WHAT STILL NEEDS TO BE DONE:
     onChange and updating the grid whenever a word
     is correct!
+
+    10/7/26:
+    WHAT STILL NEEDS TO BE DONE:
+    Hints and the numbers for each word
   */
 }
 
 type cellProps = {
-  answer: String | null;
-  input: String;
+  answer: string | null;
+  input: string;
   correct: boolean;
+  dimension: string;
+  onChange: (value: string) => void;
 };
 
 type answerGridProps = {
   answerGrid: (string | null)[][];
+  cellDimension: string;
 };
 
-function Cell({ answer, input, correct }: cellProps) {
+function Cell({ answer, input, correct, dimension, onChange }: cellProps) {
   return (
     <input
       maxLength={1}
       data-answer={answer}
-      data-input={input}
+      value={input.toUpperCase()}
       data-valid={correct}
+      onChange={(event) => onChange(event.target.value.toUpperCase())}
       style={{
-        fontSize: "25px",
-        width: "50px",
-        height: "50px",
+        fontSize: "16px",
+        width: dimension,
+        height: dimension,
         textAlign: "center",
-        backgroundColor: answer === null ? "black" : "white",
+        outline: "none",
+        border: "1px solid black",
+        boxSizing: "border-box",
+        flex: "0 0 auto",
+        backgroundColor:
+          answer === null ? "black" : correct ? "LightGreen" : "white",
+        userSelect: "none",
       }}
       readOnly={answer === null}
     />
@@ -40,8 +54,8 @@ function Cell({ answer, input, correct }: cellProps) {
 }
 
 function App(props: answerGridProps) {
-  const ROWS = 3;
-  const COLS = 3;
+  const ROWS = props.answerGrid.length;
+  const COLS = props.answerGrid[0].length;
   const [grid, setGrid] = useState(
     Array.from({ length: ROWS }, () => Array.from({ length: COLS }, () => "")),
   );
@@ -49,7 +63,12 @@ function App(props: answerGridProps) {
   return (
     <>
       {grid.map((row, rowIndex) => (
-        <div style={{ height: "50px" }}>
+        <div
+          style={{
+            height: props.cellDimension,
+            display: "flex",
+          }}
+        >
           {row.map((_: any, colIndex: number) => {
             const [verticalCorrect, horizontalCorrect] = wordCheck(
               grid,
@@ -61,8 +80,20 @@ function App(props: answerGridProps) {
               <Cell
                 key={`${rowIndex}-${colIndex}`}
                 answer={props.answerGrid[rowIndex][colIndex]}
-                input=""
+                input={grid[rowIndex][colIndex]}
                 correct={verticalCorrect || horizontalCorrect}
+                dimension={props.cellDimension}
+                onChange={(value) => {
+                  setGrid((currentGrid) =>
+                    currentGrid.map((row, currentRowIndex) =>
+                      currentRowIndex === rowIndex
+                        ? row.map((col, currentColIndex) => {
+                            return currentColIndex === colIndex ? value : col;
+                          })
+                        : row,
+                    ),
+                  );
+                }}
               />
             );
           })}

@@ -1,15 +1,112 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
 
 const answerGrid = [
-  ['h', null, 'n'],
-  ['h', 'i', 'n'],
-  ['h', 'i', 'n'],
+  [
+    null,
+    null,
+    "S",
+    "M",
+    "A",
+    "C",
+    "K",
+    null,
+    "A",
+    "B",
+    "H",
+    "O",
+    "R",
+    null,
+    null,
+  ],
+  [
+    null,
+    "T",
+    "I",
+    "E",
+    "D",
+    "Y",
+    "E",
+    null,
+    "B",
+    "L",
+    "A",
+    "R",
+    "E",
+    "S",
+    null,
+  ],
+  ["F", "A", "N", "T", "A", "S", "Y", "F", "O", "O", "T", "B", "A", "L", "L"],
+  ["A", "C", "C", "E", "P", "T", null, "R", "A", "G", "S", null, "R", "E", "I"],
+  ["M", "O", "I", "S", "T", null, "H", "E", "R", "S", null, "S", "E", "A", "M"],
+  ["E", "M", "T", null, "S", "P", "E", "N", "D", null, "G", "O", "N", "Z", "O"],
+  ["D", "A", "Y", "S", null, "U", "F", "C", null, "S", "P", "A", "D", "E", "S"],
+  [
+    null,
+    null,
+    null,
+    "N",
+    "O",
+    "R",
+    "T",
+    "H",
+    "S",
+    "T",
+    "A",
+    "R",
+    null,
+    null,
+    null,
+  ],
+  ["A", "D", "M", "I", "R", "E", null, "T", "E", "A", null, "S", "I", "R", "S"],
+  ["D", "R", "A", "P", "E", null, "B", "O", "L", "T", "S", null, "C", "O", "T"],
+  ["L", "O", "G", "S", null, "D", "U", "A", "L", null, "P", "A", "I", "G", "E"],
+  ["I", "V", "E", null, "W", "A", "G", "S", null, "H", "I", "C", "C", "U", "P"],
+  ["B", "E", "N", "D", "I", "N", "G", "T", "H", "E", "R", "U", "L", "E", "S"],
+  [
+    null,
+    "S",
+    "T",
+    "A",
+    "N",
+    "C",
+    "E",
+    null,
+    "O",
+    "R",
+    "A",
+    "T",
+    "E",
+    "S",
+    null,
+  ],
+  [
+    null,
+    null,
+    "A",
+    "D",
+    "D",
+    "E",
+    "D",
+    null,
+    "P",
+    "O",
+    "L",
+    "E",
+    "S",
+    null,
+    null,
+  ],
 ];
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App answerGrid={answerGrid} />
-  </StrictMode>
+const cellSize = "30px";
+
+createRoot(document.getElementById("root")!).render(
+  <>
+    <h1>The New Yorker Crossword October 7th 2026</h1>
+    <StrictMode>
+      <App answerGrid={answerGrid} cellDimension={cellSize} />
+    </StrictMode>
+  </>,
 );

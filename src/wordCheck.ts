@@ -2,7 +2,7 @@ function wordCheck(
   inputGrid: string[][],
   answerGrid: (string | null)[][],
   row: number,
-  col: number
+  col: number,
 ) {
   let farthestUp = row;
   let farthestDown = row;
@@ -22,8 +22,8 @@ function wordCheck(
     farthestLeft -= 1;
   }
   while (
-    farthestRight < answerGrid.length &&
-    answerGrid[row][farthestLeft] != null
+    farthestRight < answerGrid[0].length &&
+    answerGrid[row][farthestRight] != null
   ) {
     farthestRight += 1;
   }
