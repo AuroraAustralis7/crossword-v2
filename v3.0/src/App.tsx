@@ -7,17 +7,16 @@ type AppProps = {
 };
 
 function App({ cellSize }: AppProps) {
+  const [won, setWon] = useState(false);
   const [selectedCell, setSelectedCell] = useState(0);
 
   const [lastKey, setLastKey] = useState("");
 
   // Puzzle info variables
-  let puzzleTitle: string | undefined = "";
-  let puzzleAuthor: string | undefined = "";
   const [puzzleSolution, setPuzzleSolution] = useState<string[]>([]);
-  const [cellCount, setCellCount] = useState(0);
   const [rowCount, setRowCount] = useState(0);
   const [rowLength, setRowLength] = useState(0);
+  const [numberLabelGrid, setNumberLabelGrid] = useState<number[]>([])
 
   // grid init
   const [grid, setGrid] = useState<string[]>([]);
@@ -34,22 +33,24 @@ function App({ cellSize }: AppProps) {
       try {
         const loadingPuzzle = await CrosswordReader();
         setCrosswordInfo(loadingPuzzle);
-        puzzleTitle = loadingPuzzle.title;
-        puzzleAuthor = loadingPuzzle.author;
-        setPuzzleSolution(
-          loadingPuzzle.grid.cells.flatMap((row) => {
-            return row.map((cell) => cell.solution ?? "N/A");
-          }),
-        );
+        const loadingPuzzleSolution = loadingPuzzle.grid.cells.flatMap((row) => {
+          return row.map((cell) => cell.solution ?? "N/A");
+        })
+        setPuzzleSolution(loadingPuzzleSolution);
         // console.log(puzzleSolution);
-        setCellCount(loadingPuzzle.grid.height * loadingPuzzle.grid.width);
         setRowCount(loadingPuzzle.grid.height);
         setRowLength(loadingPuzzle.grid.width);
         setGrid(
           loadingPuzzle.grid.cells.flatMap((row) => {
-            return row.map((cell) => "");
+            return row.map((_) => "");
           }),
         );
+
+        // number init
+        setNumberLabelGrid(loadingPuzzle.grid.cells.flatMap((row) => {
+          return row.map((cell) => cell.number ?? -1);
+        }));
+        // console.log(numberPlacer(loadingPuzzleSolution, loadingPuzzle.clues.across, loadingPuzzle.clues.down, loadingPuzzle.grid.width, loadingPuzzle.grid.height))
         console.log(loadingPuzzle);
       } catch {
         console.error("Unable to read crossword file. Lock in.");
@@ -106,68 +107,142 @@ function App({ cellSize }: AppProps) {
   // console.log(lastKey);
   // console.log(grid);
 
-  function numbersGrid() {
-    const solutionGrid = puzzleSolution;
-
-    let numberGrid = [];
-  }
-
   function answerCheck() {
-    return grid == puzzleSolution;
+    return (
+      grid.length === puzzleSolution.length &&
+      grid.every((cell, index) => {
+        const solutionCell = puzzleSolution[index] === "N/A"
+          ? ""
+          : puzzleSolution[index];
+
+        return cell === solutionCell;
+      })
+    );
   }
 
   return (
     <>
-      <div
-        className="grid"
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
-        }}
-      >
-        {grid.map((cellInput, cellInputIndex) => (
-          <button
-            key={`${cellInputIndex}`}
-            className="cell"
+      <div className="all">
+        <div>
+          <div>
+            <h2>
+              {crosswordInfo?.title}
+            </h2>
+            <h2>
+              {crosswordInfo?.author}
+            </h2>
+          </div>
+          <div
+            className="grid"
             style={{
-              width: `${cellSize}px`,
-              height: `${cellSize}px`,
-              fontSize: `${cellSize * 0.5}px`,
-              backgroundColor:
-                puzzleSolution[cellInputIndex] === "N/A"
-                  ? "black"
-                  : cellInputIndex === selectedCell
-                    ? "lightGreen"
-                    : "white",
-            }}
-            onClick={() => {
-              setSelectedCell(cellInputIndex);
+              display: "grid",
+              gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
             }}
           >
-            {puzzleSolution[cellInputIndex] === "N/A" ? "" : cellInput}
-          </button>
-        ))}
-      </div>
-      <div
-        style={{
-          paddingTop: "5px",
-        }}
-      >
-        <button
-          style={{
-            width: `${rowCount * cellSize}px`,
-            height: "20px",
-          }}
-          onClick={() => {
-            if (answerCheck()) {
-              console.log("WON!");
-            } else {
-              console.log("NOT YET!");
-            }
-          }}
-        >
-          Submit
-        </button>
+            {grid.map((cellInput, cellInputIndex) => (
+              <div
+                className="container"
+                style={{
+                  width: `${cellSize}px`,
+                  height: `${cellSize}px`,
+                }}>
+                <button
+                  key={`${cellInputIndex}`}
+                  className="cell"
+                  style={{
+                    width: `${cellSize}px`,
+                    height: `${cellSize}px`,
+                    fontSize: `${cellSize * 0.5}px`,
+                    backgroundColor:
+                      puzzleSolution[cellInputIndex] === "N/A"
+                        ? "black"
+                        : cellInputIndex === selectedCell
+                          ? "lightGreen"
+                          : "white",
+                  }}
+                  onClick={() => {
+                    setSelectedCell(cellInputIndex);
+                  }}
+                >
+                  {puzzleSolution[cellInputIndex] === "N/A" ? "" : cellInput}
+                </button>
+                <p
+                  className="numberOverlay"
+                  style={{
+                    fontSize: "10px",
+                    userSelect: 'none'
+                  }}>
+                  {numberLabelGrid[cellInputIndex] != -1 ? numberLabelGrid[cellInputIndex] : ""}
+                </p>
+              </div>
+
+            ))}
+          </div>
+          <div
+            style={{
+              paddingTop: "5px",
+            }}
+          >
+            <button
+              style={{
+                width: `${rowCount * cellSize}px`,
+                height: "20px",
+              }}
+              onClick={() => {
+                if (answerCheck()) {
+                  setWon(true);
+                } else {
+                  setWon(false);
+                }
+              }}
+            >
+              Submit
+            </button>
+          </div>
+          <div
+            style={{
+              paddingTop: "5px",
+            }}
+          >
+            <p>
+              Status: {won ? "Completed" : "Not done yet"}
+            </p>
+          </div>
+        </div>
+        <div className="clues">
+          <div>
+            <h3>
+              Across:
+            </h3>
+            <ul>
+              {
+                crosswordInfo?.clues.across.map((clue) => {
+                  return (
+                    <li>
+                      {clue.number}: {clue.text}
+                    </li>
+                  )
+                })
+              }
+            </ul>
+          </div>
+          <div>
+            <h3>
+              Down:
+            </h3>
+            <ul>
+              {
+                crosswordInfo?.clues.down.map((clue) => {
+                  return (
+                    <li>
+                      {clue.number}: {clue.text}
+                    </li>
+                  )
+                })
+              }
+            </ul>
+          </div>
+        </div>
       </div>
     </>
   );
