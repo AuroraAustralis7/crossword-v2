@@ -1,18 +1,44 @@
+@import "tailwindcss";
+
+.header {
+  padding: 5px 5px 5px 5px;
+}
+
 .container {
-    position: relative;
+  position: relative;
 }
 
 .numberOverlay {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    margin: 0;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  margin: 0;
+}
+
+.grid {
+  padding: 5px 5px 5px 5px;
+}
+
+.cell {
+  border-radius: var(--radius-md);
+  outline-width: 1px;
+  outline-color: var(--color-black);
+  outline-style: solid;
+}
+
+.submitButton {
+  line-height: 0;
+  border-radius: var(--radius-sm);
+  outline-width: 1px;
+  outline-color: var(--color-black);
+  outline-style: solid;
 }
 
 .all {
-    display: flex;
+  display: flex;
+  padding: 5px 10px 5px 10px;
 }
 
 .clues {
-    display: flex;
+  display: flex;
 }

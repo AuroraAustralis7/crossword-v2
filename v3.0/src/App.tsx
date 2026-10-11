@@ -10,13 +10,15 @@ function App({ cellSize }: AppProps) {
   const [won, setWon] = useState(false);
   const [selectedCell, setSelectedCell] = useState(0);
 
+  // user info
   const [lastKey, setLastKey] = useState("");
+  const [vertical, setVertical] = useState(true);
 
   // Puzzle info variables
   const [puzzleSolution, setPuzzleSolution] = useState<string[]>([]);
   const [rowCount, setRowCount] = useState(0);
   const [rowLength, setRowLength] = useState(0);
-  const [numberLabelGrid, setNumberLabelGrid] = useState<number[]>([])
+  const [numberLabelGrid, setNumberLabelGrid] = useState<number[]>([]);
 
   // grid init
   const [grid, setGrid] = useState<string[]>([]);
@@ -33,9 +35,11 @@ function App({ cellSize }: AppProps) {
       try {
         const loadingPuzzle = await CrosswordReader();
         setCrosswordInfo(loadingPuzzle);
-        const loadingPuzzleSolution = loadingPuzzle.grid.cells.flatMap((row) => {
-          return row.map((cell) => cell.solution ?? "N/A");
-        })
+        const loadingPuzzleSolution = loadingPuzzle.grid.cells.flatMap(
+          (row) => {
+            return row.map((cell) => cell.solution ?? "N/A");
+          },
+        );
         setPuzzleSolution(loadingPuzzleSolution);
         // console.log(puzzleSolution);
         setRowCount(loadingPuzzle.grid.height);
@@ -47,9 +51,11 @@ function App({ cellSize }: AppProps) {
         );
 
         // number init
-        setNumberLabelGrid(loadingPuzzle.grid.cells.flatMap((row) => {
-          return row.map((cell) => cell.number ?? -1);
-        }));
+        setNumberLabelGrid(
+          loadingPuzzle.grid.cells.flatMap((row) => {
+            return row.map((cell) => cell.number ?? -1);
+          }),
+        );
         // console.log(numberPlacer(loadingPuzzleSolution, loadingPuzzle.clues.across, loadingPuzzle.clues.down, loadingPuzzle.grid.width, loadingPuzzle.grid.height))
         console.log(loadingPuzzle);
       } catch {
@@ -65,8 +71,103 @@ function App({ cellSize }: AppProps) {
     */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      let key = e.key.toUpperCase();
       if (/^[a-z]$/i.test(e.key)) {
-        setLastKey(e.key.toUpperCase());
+        setLastKey(key);
+        if (vertical) {
+          let newCell = selectedCell;
+          if (puzzleSolution[newCell] != "N/A") {
+            newCell = (newCell + rowLength) % (rowLength * rowCount);
+          }
+          let maxSteps = 0;
+          while (puzzleSolution[newCell] == "N/A" && maxSteps < rowCount) {
+            newCell = (newCell + rowLength) % (rowLength * rowCount);
+            maxSteps++;
+          }
+          setSelectedCell(newCell);
+        } else {
+          let newCell = selectedCell;
+          if (puzzleSolution[newCell] != "N/A") {
+            newCell =
+              (((newCell % rowLength) + 1) % rowLength) +
+              newCell -
+              (newCell % rowLength);
+          }
+          let maxSteps = 0;
+          while (puzzleSolution[newCell] == "N/A" && maxSteps < rowLength) {
+            newCell =
+              (((newCell % rowLength) + 1) % rowLength) +
+              newCell -
+              (newCell % rowLength);
+            maxSteps++;
+          }
+          setSelectedCell(newCell);
+        }
+      } else if (key === "BACKSPACE") {
+        key = "";
+        setLastKey(key);
+        if (vertical) {
+          let newCell = selectedCell;
+          if (puzzleSolution[newCell] != "N/A") {
+            const wrap = rowLength * rowCount;
+            newCell = (newCell - rowLength + wrap) % (rowLength * rowCount);
+          }
+          let maxSteps = 0;
+          while (puzzleSolution[newCell] == "N/A" && maxSteps < rowCount) {
+            const wrap = rowLength * rowCount;
+            newCell = (newCell - rowLength + wrap) % wrap;
+            maxSteps++;
+          }
+          setSelectedCell(newCell);
+        } else {
+          let newCell = selectedCell;
+          if (puzzleSolution[newCell] != "N/A") {
+            newCell =
+              (((newCell % rowLength) - 1 + rowLength) % rowLength) +
+              newCell -
+              (newCell % rowLength);
+          }
+          let maxSteps = 0;
+          while (puzzleSolution[newCell] == "N/A" && maxSteps < rowLength) {
+            newCell =
+              (((newCell % rowLength) - 1 + rowLength) % rowLength) +
+              newCell -
+              (newCell % rowLength);
+            maxSteps++;
+          }
+          setSelectedCell(newCell);
+        }
+      } else if (key === "TAB") {
+        if (vertical) {
+          let newCell = selectedCell;
+          if (puzzleSolution[newCell] != "N/A") {
+            newCell = (newCell + rowLength) % (rowLength * rowCount);
+          }
+          let maxSteps = 0;
+          while (puzzleSolution[newCell] == "N/A" && maxSteps < rowCount) {
+            newCell = (newCell + rowLength) % (rowLength * rowCount);
+            maxSteps++;
+          }
+          setSelectedCell(newCell);
+        } else {
+          let newCell = selectedCell;
+          if (puzzleSolution[newCell] != "N/A") {
+            newCell =
+              (((newCell % rowLength) + 1) % rowLength) +
+              newCell -
+              (newCell % rowLength);
+          }
+          let maxSteps = 0;
+          while (puzzleSolution[newCell] == "N/A" && maxSteps < rowLength) {
+            newCell =
+              (((newCell % rowLength) + 1) % rowLength) +
+              newCell -
+              (newCell % rowLength);
+            maxSteps++;
+          }
+          setSelectedCell(newCell);
+        }
+        return;
       } else {
         return;
       }
@@ -75,7 +176,7 @@ function App({ cellSize }: AppProps) {
           puzzleSolution[index] === "N/A"
             ? ""
             : index === selectedCell
-              ? e.key.toUpperCase()
+              ? key
               : cell,
         ),
       );
@@ -86,7 +187,7 @@ function App({ cellSize }: AppProps) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedCell]);
+  }, [selectedCell, vertical]);
 
   /*
       This useEffect() hook clears the most recent key
@@ -111,9 +212,8 @@ function App({ cellSize }: AppProps) {
     return (
       grid.length === puzzleSolution.length &&
       grid.every((cell, index) => {
-        const solutionCell = puzzleSolution[index] === "N/A"
-          ? ""
-          : puzzleSolution[index];
+        const solutionCell =
+          puzzleSolution[index] === "N/A" ? "" : puzzleSolution[index];
 
         return cell === solutionCell;
       })
@@ -123,20 +223,21 @@ function App({ cellSize }: AppProps) {
   return (
     <>
       <div className="all">
-        <div>
-          <div>
-            <h2>
-              {crosswordInfo?.title}
-            </h2>
-            <h2>
-              {crosswordInfo?.author}
-            </h2>
+        <div
+          style={{
+            padding: "5px 30px 5px 10px",
+          }}
+        >
+          <div className="header">
+            <h2>{crosswordInfo?.title}</h2>
+            <h2>{crosswordInfo?.author}</h2>
           </div>
           <div
             className="grid"
             style={{
               display: "grid",
-              gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
+              gridTemplateColumns: `repeat(${rowLength}, ${cellSize + 2}px)`,
+              gridTemplateRows: `repeat(${rowCount}, ${cellSize + 2}px)`,
             }}
           >
             {grid.map((cellInput, cellInputIndex) => (
@@ -145,7 +246,9 @@ function App({ cellSize }: AppProps) {
                 style={{
                   width: `${cellSize}px`,
                   height: `${cellSize}px`,
-                }}>
+                  paddingBottom: "2px",
+                }}
+              >
                 <button
                   key={`${cellInputIndex}`}
                   className="cell"
@@ -157,10 +260,20 @@ function App({ cellSize }: AppProps) {
                       puzzleSolution[cellInputIndex] === "N/A"
                         ? "black"
                         : cellInputIndex === selectedCell
-                          ? "lightGreen"
-                          : "white",
+                          ? "#4fe34f"
+                          : (vertical &&
+                                cellInputIndex % rowLength ==
+                                  selectedCell % rowLength) ||
+                              (!vertical &&
+                                Math.floor(cellInputIndex / rowLength) ==
+                                  Math.floor(selectedCell / rowLength))
+                            ? "#a6f2a6"
+                            : "white",
                   }}
                   onClick={() => {
+                    if (cellInputIndex === selectedCell) {
+                      setVertical(!vertical);
+                    }
                     setSelectedCell(cellInputIndex);
                   }}
                 >
@@ -169,13 +282,15 @@ function App({ cellSize }: AppProps) {
                 <p
                   className="numberOverlay"
                   style={{
-                    fontSize: "10px",
-                    userSelect: 'none'
-                  }}>
-                  {numberLabelGrid[cellInputIndex] != -1 ? numberLabelGrid[cellInputIndex] : ""}
+                    fontSize: `${cellSize * 0.25}px`,
+                    userSelect: "none",
+                  }}
+                >
+                  {numberLabelGrid[cellInputIndex] != -1
+                    ? numberLabelGrid[cellInputIndex]
+                    : ""}
                 </p>
               </div>
-
             ))}
           </div>
           <div
@@ -184,8 +299,10 @@ function App({ cellSize }: AppProps) {
             }}
           >
             <button
+              className="submitButton"
               style={{
-                width: `${rowCount * cellSize}px`,
+                alignItems: "center",
+                width: `${rowCount * (cellSize + 2)}px`,
                 height: "20px",
               }}
               onClick={() => {
@@ -204,42 +321,32 @@ function App({ cellSize }: AppProps) {
               paddingTop: "5px",
             }}
           >
-            <p>
-              Status: {won ? "Completed" : "Not done yet"}
-            </p>
+            <p>Status: {won ? "Completed" : "Not done yet"}</p>
           </div>
         </div>
         <div className="clues">
           <div>
-            <h3>
-              Across:
-            </h3>
+            <h3>Across:</h3>
             <ul>
-              {
-                crosswordInfo?.clues.across.map((clue) => {
-                  return (
-                    <li>
-                      {clue.number}: {clue.text}
-                    </li>
-                  )
-                })
-              }
+              {crosswordInfo?.clues.across.map((clue) => {
+                return (
+                  <li>
+                    {clue.number}: {clue.text}
+                  </li>
+                );
+              })}
             </ul>
           </div>
           <div>
-            <h3>
-              Down:
-            </h3>
+            <h3>Down:</h3>
             <ul>
-              {
-                crosswordInfo?.clues.down.map((clue) => {
-                  return (
-                    <li>
-                      {clue.number}: {clue.text}
-                    </li>
-                  )
-                })
-              }
+              {crosswordInfo?.clues.down.map((clue) => {
+                return (
+                  <li>
+                    {clue.number}: {clue.text}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </div>
