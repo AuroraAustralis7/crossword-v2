@@ -322,18 +322,26 @@ function App({ cellSize }: AppProps) {
           </div>
         </div>
         <div className="clues">
-          <div
-            style={{
-              alignItems: "center",
+          <div 
+          className="cluesAcrossContainer"
+          style={{
+              height: `${cellSize * (rowCount)}px`,
             }}
           >
-            <h4
+          <h4
               style={{
                 textAlign: "center",
+                marginBottom: "5px"
               }}
             >
               Across:
             </h4>
+            <div
+            className="cluesAcross"
+            style={{
+              height: `${cellSize * rowCount}px`,
+            }}
+          >
             <ul>
               {crosswordInfo?.clues.across.map((clue) => {
                 return (
@@ -358,18 +366,22 @@ function App({ cellSize }: AppProps) {
               })}
             </ul>
           </div>
-          <div
+          </div>
+          <div 
+            className="cluesDownContainer"
             style={{
-              alignItems: "center",
+              height: `${cellSize * (rowCount)}px`,
             }}
-          >
-            <h4
+            >
+          <h4
               style={{
                 textAlign: "center",
+                marginBottom: "5px"
               }}
             >
               Down:
-            </h4>
+          </h4>
+          <div className="cluesDown">
             <ul>
               {crosswordInfo?.clues.down.map((clue) => {
                 return (
@@ -395,6 +407,7 @@ function App({ cellSize }: AppProps) {
             </ul>
           </div>
         </div>
+      </div>
       </div>
     </>
   );
