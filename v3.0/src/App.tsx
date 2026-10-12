@@ -318,96 +318,102 @@ function App({ cellSize }: AppProps) {
               paddingTop: "5px",
             }}
           >
-            <p>Status: {won ? "Completed" : "Not done yet"}</p>
+            <p
+              style={{
+                userSelect: "none",
+              }}
+            >
+              Status: {won ? "Completed" : "Not done yet"}
+            </p>
           </div>
         </div>
         <div className="clues">
-          <div 
-          className="cluesAcrossContainer"
-          style={{
-              height: `${cellSize * (rowCount)}px`,
+          <div
+            className="cluesAcrossContainer"
+            style={{
+              height: `${cellSize * rowCount}px`,
             }}
           >
-          <h4
+            <h4
               style={{
                 textAlign: "center",
-                marginBottom: "5px"
+                marginBottom: "5px",
               }}
             >
               Across:
             </h4>
             <div
-            className="cluesAcross"
+              className="cluesAcross"
+              style={{
+                height: `${cellSize * rowCount}px`,
+              }}
+            >
+              <ul>
+                {crosswordInfo?.clues.across.map((clue) => {
+                  return (
+                    <li className="clue">
+                      <button
+                        tabIndex={-1}
+                        onClick={() => {
+                          let correctIndex = 0;
+                          for (let i = 0; i < numberLabelGrid.length; i++) {
+                            if (numberLabelGrid[i] == clue.number) {
+                              correctIndex = i;
+                            }
+                          }
+                          setVertical(false);
+                          setSelectedCell(correctIndex);
+                        }}
+                      >
+                        {clue.number}: {clue.text}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+          <div
+            className="cluesDownContainer"
             style={{
               height: `${cellSize * rowCount}px`,
             }}
           >
-            <ul>
-              {crosswordInfo?.clues.across.map((clue) => {
-                return (
-                  <li className="clue">
-                    <button
-                      tabIndex={-1}
-                      onClick={() => {
-                        let correctIndex = 0;
-                        for (let i = 0; i < numberLabelGrid.length; i++) {
-                          if (numberLabelGrid[i] == clue.number) {
-                            correctIndex = i;
-                          }
-                        }
-                        setVertical(false);
-                        setSelectedCell(correctIndex);
-                      }}
-                    >
-                      {clue.number}: {clue.text}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          </div>
-          <div 
-            className="cluesDownContainer"
-            style={{
-              height: `${cellSize * (rowCount)}px`,
-            }}
-            >
-          <h4
+            <h4
               style={{
                 textAlign: "center",
-                marginBottom: "5px"
+                marginBottom: "5px",
               }}
             >
               Down:
-          </h4>
-          <div className="cluesDown">
-            <ul>
-              {crosswordInfo?.clues.down.map((clue) => {
-                return (
-                  <li className="clue">
-                    <button
-                      tabIndex={-1}
-                      onClick={() => {
-                        let correctIndex = 0;
-                        for (let i = 0; i < numberLabelGrid.length; i++) {
-                          if (numberLabelGrid[i] == clue.number) {
-                            correctIndex = i;
+            </h4>
+            <div className="cluesDown">
+              <ul>
+                {crosswordInfo?.clues.down.map((clue) => {
+                  return (
+                    <li className="clue">
+                      <button
+                        tabIndex={-1}
+                        onClick={() => {
+                          let correctIndex = 0;
+                          for (let i = 0; i < numberLabelGrid.length; i++) {
+                            if (numberLabelGrid[i] == clue.number) {
+                              correctIndex = i;
+                            }
                           }
-                        }
-                        setVertical(true);
-                        setSelectedCell(correctIndex);
-                      }}
-                    >
-                      {clue.number}: {clue.text}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+                          setVertical(true);
+                          setSelectedCell(correctIndex);
+                        }}
+                      >
+                        {clue.number}: {clue.text}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </>
   );
