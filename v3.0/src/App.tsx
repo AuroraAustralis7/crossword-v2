@@ -252,6 +252,7 @@ function App({ cellSize }: AppProps) {
                 <button
                   key={`${cellInputIndex}`}
                   className="cell"
+                  disabled={puzzleSolution[cellInputIndex] === "N/A"}
                   style={{
                     width: `${cellSize}px`,
                     height: `${cellSize}px`,
