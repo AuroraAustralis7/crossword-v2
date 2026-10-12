@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Lato";
+  font-display: auto;
+  src: url("/fonts/Lato/Lato-Regular.ttf") format("truetype");
+}
+
+.all {
+  font-family: "Lato", sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 5px 10px 5px 10px;
+  color: #2e2e2e;
+}
+
 .header {
   padding: 5px 5px 5px 5px;
 }
@@ -20,35 +34,55 @@
 }
 
 .cell {
-  border-radius: var(--radius-md);
   outline-width: 1px;
-  outline-color: var(--color-black);
+  outline-color: #2e2e2e;
   outline-style: solid;
-}
-
-.submitButton {
-  line-height: 0;
-  border-radius: var(--radius-sm);
-  outline-width: 1px;
-  outline-color: var(--color-black);
-  outline-style: solid;
-}
-
-.all {
-  display: flex;
-  padding: 5px 10px 5px 10px;
 }
 
 .clues {
+  margin-top: 60px;
   display: flex;
+  font-size: 0.8rem;
+  gap: 10px;
 }
 
-.clue {
-  border-radius: var(--radius-sm);
-  outline-width: 1px;
-  outline-color: var(--color-black);
-  outline-style: solid;
-  margin: 5px;
-  font-size: 1.25ch;
-  text-align: center;
+.cluesAcross, .cluesDown {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 5px 5px 5px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #555555 transparent;
+}
+
+.submitButton {
+  height: 2.5rem;
+  width: 6rem;
+  background-color: #2e2e2e;
+  color: white;
+  border-radius: var(--radius-3xl);
+}
+
+.cluesAcrossContainer, .cluesDownContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px 25px 20px;
+  background-color: #2e2e2e;
+  color: white;
+  border-radius: var(--radius-3xl);
+  width: 20rem;
+}
+
+.clue button {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #555555;
+}
+
+.clue button:focus {
+  background-color: white;
+  color: #2e2e2e;
 }
