@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Lato";
+  font-display: auto;
+  src: url("/fonts/Lato/Lato-Regular.ttf") format("truetype");
+}
+
+.all {
+  font-family: "Lato", sans-serif;
+  display: flex;
+  justify-content: center;
+  padding: 5px 10px 5px 10px;
+}
+
 .header {
   padding: 5px 5px 5px 5px;
 }
@@ -20,23 +33,9 @@
 }
 
 .cell {
-  border-radius: var(--radius-md);
   outline-width: 1px;
-  outline-color: var(--color-black);
+  outline-color: #2e2e2e;
   outline-style: solid;
-}
-
-.submitButton {
-  line-height: 0;
-  border-radius: var(--radius-sm);
-  outline-width: 1px;
-  outline-color: var(--color-black);
-  outline-style: solid;
-}
-
-.all {
-  display: flex;
-  padding: 5px 10px 5px 10px;
 }
 
 .clues {
@@ -46,9 +45,17 @@
 .clue {
   border-radius: var(--radius-sm);
   outline-width: 1px;
-  outline-color: var(--color-black);
+  outline-color: #2e2e2e;
   outline-style: solid;
   margin: 5px;
   font-size: 1.25ch;
   text-align: center;
+}
+
+.submitButton {
+  height: 2.5rem;
+  width: 6rem;
+  background-color: #2e2e2e;
+  color: white;
+  border-radius: var(--radius-3xl);
 }

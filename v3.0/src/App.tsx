@@ -236,8 +236,8 @@ function App({ cellSize }: AppProps) {
             className="grid"
             style={{
               display: "grid",
-              gridTemplateColumns: `repeat(${rowLength}, ${cellSize + 2}px)`,
-              gridTemplateRows: `repeat(${rowCount}, ${cellSize + 2}px)`,
+              gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
+              gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
             }}
           >
             {grid.map((cellInput, cellInputIndex) => (
@@ -258,7 +258,7 @@ function App({ cellSize }: AppProps) {
                     fontSize: `${cellSize * 0.5}px`,
                     backgroundColor:
                       puzzleSolution[cellInputIndex] === "N/A"
-                        ? "black"
+                        ? "#2e2e2e"
                         : cellInputIndex === selectedCell
                           ? "#4fe34f"
                           : (vertical &&
@@ -301,11 +301,6 @@ function App({ cellSize }: AppProps) {
             <button
               className="submitButton"
               tabIndex={-1}
-              style={{
-                alignItems: "center",
-                width: `${rowCount * (cellSize + 2)}px`,
-                height: "20px",
-              }}
               onClick={() => {
                 if (answerCheck()) {
                   setWon(true);
