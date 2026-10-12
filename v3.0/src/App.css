@@ -22,6 +22,10 @@
   position: relative;
 }
 
+.container:focus-within {
+  z-index: 1;
+}
+
 .container button:focus {
   animation: scale-pulse-container 1.5s;
 }
@@ -97,6 +101,7 @@
 
 .clue button:focus {
   border-radius: var(--radius-sm);
+  z-index: -1;
   background-color: white;
   color: #2e2e2e;
   animation: scale-pulse-clue 1.5s;
@@ -119,7 +124,7 @@
     transform: scale(1);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.1);
   }
   100% {
     transform: scale(1);

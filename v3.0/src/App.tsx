@@ -57,7 +57,7 @@ function App({ cellSize }: AppProps) {
           }),
         );
         // console.log(numberPlacer(loadingPuzzleSolution, loadingPuzzle.clues.across, loadingPuzzle.clues.down, loadingPuzzle.grid.width, loadingPuzzle.grid.height))
-        console.log(loadingPuzzle);
+        // console.log(loadingPuzzle);
       } catch {
         console.error("Unable to read crossword file. Lock in.");
       }
@@ -243,6 +243,7 @@ function App({ cellSize }: AppProps) {
             {grid.map((cellInput, cellInputIndex) => (
               <div
                 className="container"
+                key={`${cellInputIndex}`}
                 style={{
                   width: `${cellSize}px`,
                   height: `${cellSize}px`,
@@ -250,7 +251,6 @@ function App({ cellSize }: AppProps) {
                 }}
               >
                 <button
-                  key={`${cellInputIndex}`}
                   className="cell"
                   disabled={puzzleSolution[cellInputIndex] === "N/A"}
                   style={{
