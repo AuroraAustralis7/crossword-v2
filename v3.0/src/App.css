@@ -46,7 +46,8 @@
   gap: 10px;
 }
 
-.cluesAcross, .cluesDown {
+.cluesAcross,
+.cluesDown {
   display: flex;
   flex-direction: column;
   padding: 5px 5px 5px 5px;
@@ -63,7 +64,8 @@
   border-radius: var(--radius-3xl);
 }
 
-.cluesAcrossContainer, .cluesDownContainer {
+.cluesAcrossContainer,
+.cluesDownContainer {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -83,6 +85,7 @@
 }
 
 .clue button:focus {
+  border-radius: var(--radius-sm);
   background-color: white;
   color: #2e2e2e;
 }
