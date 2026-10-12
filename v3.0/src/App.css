@@ -22,6 +22,10 @@
   position: relative;
 }
 
+.container button:focus {
+  animation: scale-pulse-container 1.5s;
+}
+
 .numberOverlay {
   position: absolute;
   top: 2px;
@@ -60,8 +64,15 @@
   height: 2.5rem;
   width: 6rem;
   background-color: #2e2e2e;
+  box-shadow: 0 9px #999;
   color: white;
   border-radius: var(--radius-3xl);
+}
+
+.submitButton:active {
+  background-color: #2e2e2e;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
 }
 
 .cluesAcrossContainer,
@@ -88,4 +99,29 @@
   border-radius: var(--radius-sm);
   background-color: white;
   color: #2e2e2e;
+  animation: scale-pulse-clue 1.5s;
+}
+
+@keyframes scale-pulse-clue {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes scale-pulse-container {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
