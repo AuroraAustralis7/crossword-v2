@@ -300,6 +300,7 @@ function App({ cellSize }: AppProps) {
           >
             <button
               className="submitButton"
+              tabIndex={-1}
               style={{
                 alignItems: "center",
                 width: `${rowCount * (cellSize + 2)}px`,
@@ -325,25 +326,73 @@ function App({ cellSize }: AppProps) {
           </div>
         </div>
         <div className="clues">
-          <div>
-            <h3>Across:</h3>
+          <div
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <h4
+              style={{
+                textAlign: "center",
+              }}
+            >
+              Across:
+            </h4>
             <ul>
               {crosswordInfo?.clues.across.map((clue) => {
                 return (
-                  <li>
-                    {clue.number}: {clue.text}
+                  <li className="clue">
+                    <button
+                      tabIndex={-1}
+                      onClick={() => {
+                        let correctIndex = 0;
+                        for (let i = 0; i < numberLabelGrid.length; i++) {
+                          if (numberLabelGrid[i] == clue.number) {
+                            correctIndex = i;
+                          }
+                        }
+                        setVertical(false);
+                        setSelectedCell(correctIndex);
+                      }}
+                    >
+                      {clue.number}: {clue.text}
+                    </button>
                   </li>
                 );
               })}
             </ul>
           </div>
-          <div>
-            <h3>Down:</h3>
+          <div
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <h4
+              style={{
+                textAlign: "center",
+              }}
+            >
+              Down:
+            </h4>
             <ul>
               {crosswordInfo?.clues.down.map((clue) => {
                 return (
-                  <li>
-                    {clue.number}: {clue.text}
+                  <li className="clue">
+                    <button
+                      tabIndex={-1}
+                      onClick={() => {
+                        let correctIndex = 0;
+                        for (let i = 0; i < numberLabelGrid.length; i++) {
+                          if (numberLabelGrid[i] == clue.number) {
+                            correctIndex = i;
+                          }
+                        }
+                        setVertical(true);
+                        setSelectedCell(correctIndex);
+                      }}
+                    >
+                      {clue.number}: {clue.text}
+                    </button>
                   </li>
                 );
               })}

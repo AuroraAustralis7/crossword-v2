@@ -42,3 +42,13 @@
 .clues {
   display: flex;
 }
+
+.clue {
+  border-radius: var(--radius-sm);
+  outline-width: 1px;
+  outline-color: var(--color-black);
+  outline-style: solid;
+  margin: 5px;
+  font-size: 1.25ch;
+  text-align: center;
+}
