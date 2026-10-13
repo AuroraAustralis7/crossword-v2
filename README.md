@@ -28,3 +28,6 @@ npm run dev
 ```
 
 The crossword should then be live at port 5173, the default for vite.
+
+If you don't care to set it up locally, the website is also hosted at:
+https://crossword-v2-nine.vercel.app/

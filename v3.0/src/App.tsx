@@ -168,6 +168,66 @@ function App({ cellSize }: AppProps) {
           setSelectedCell(newCell);
         }
         return;
+      } else if (key === "ARROWDOWN") {
+        let newCell = selectedCell;
+        if (puzzleSolution[newCell] != "N/A") {
+          newCell = (newCell + rowLength) % (rowLength * rowCount);
+        }
+        let maxSteps = 0;
+        while (puzzleSolution[newCell] == "N/A" && maxSteps < rowCount) {
+          newCell = (newCell + rowLength) % (rowLength * rowCount);
+          maxSteps++;
+        }
+        setSelectedCell(newCell);
+        return;
+      } else if (key === "ARROWRIGHT") {
+        let newCell = selectedCell;
+        if (puzzleSolution[newCell] != "N/A") {
+          newCell =
+            (((newCell % rowLength) + 1 + rowLength) % rowLength) +
+            newCell -
+            (newCell % rowLength);
+        }
+        let maxSteps = 0;
+        while (puzzleSolution[newCell] == "N/A" && maxSteps < rowLength) {
+          newCell =
+            (((newCell % rowLength) + 1 + rowLength) % rowLength) +
+            newCell -
+            (newCell % rowLength);
+          maxSteps++;
+        }
+        setSelectedCell(newCell);
+        return;
+      } else if (key === "ARROWUP") {
+        let newCell = selectedCell;
+        if (puzzleSolution[newCell] != "N/A") {
+          newCell = (newCell - rowLength + rowLength * rowCount) % (rowLength * rowCount);
+        }
+        let maxSteps = 0;
+        while (puzzleSolution[newCell] == "N/A" && maxSteps < rowCount) {
+          newCell = (newCell - rowLength + rowLength * rowCount) % (rowLength * rowCount);
+          maxSteps++;
+        }
+        setSelectedCell(newCell);
+        return;
+      } else if (key === "ARROWLEFT") {
+        let newCell = selectedCell;
+        if (puzzleSolution[newCell] != "N/A") {
+          newCell =
+            (((newCell % rowLength) - 1 + rowLength) % rowLength) +
+            newCell -
+            (newCell % rowLength);
+        }
+        let maxSteps = 0;
+        while (puzzleSolution[newCell] == "N/A" && maxSteps < rowLength) {
+          newCell =
+            (((newCell % rowLength) - 1 + rowLength) % rowLength) +
+            newCell -
+            (newCell % rowLength);
+          maxSteps++;
+        }
+        setSelectedCell(newCell);
+        return;
       } else {
         return;
       }
@@ -263,11 +323,11 @@ function App({ cellSize }: AppProps) {
                         : cellInputIndex === selectedCell
                           ? "#4fe34f"
                           : (vertical &&
-                                cellInputIndex % rowLength ==
-                                  selectedCell % rowLength) ||
-                              (!vertical &&
-                                Math.floor(cellInputIndex / rowLength) ==
-                                  Math.floor(selectedCell / rowLength))
+                            cellInputIndex % rowLength ==
+                            selectedCell % rowLength) ||
+                            (!vertical &&
+                              Math.floor(cellInputIndex / rowLength) ==
+                              Math.floor(selectedCell / rowLength))
                             ? "#a6f2a6"
                             : "white",
                   }}
