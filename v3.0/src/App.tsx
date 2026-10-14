@@ -392,7 +392,7 @@ function App({ cellSize }: AppProps) {
             className="cluesAcrossContainer"
             style={{
               height: `${cellSize * (rowCount/2)}px`,
-              marginTop: `${cellSize * 2.15}px`,
+              marginTop: `${cellSize * 2.1}px`,
             }}
           >
             <h4
