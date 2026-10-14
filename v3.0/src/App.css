@@ -40,7 +40,7 @@
 }
 
 .clues {
-  margin-top: 60px;
+  flex-direction: column;
   display: flex;
   font-size: 0.8rem;
   gap: 10px;
@@ -87,7 +87,7 @@
 .clue button {
   width: 100%;
   text-align: left;
-  margin-bottom: 5px;
+  padding: 2px 2px 2px 2px;
   border-bottom: 1px solid #555555;
 }
 
