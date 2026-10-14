@@ -30,6 +30,10 @@ function App({ cellSize }: AppProps) {
     null,
   );
 
+  /*
+    check crossword info from .puz file
+  */
+
   useEffect(() => {
     const asyncPuzzleLoader = async () => {
       try {
@@ -268,6 +272,10 @@ function App({ cellSize }: AppProps) {
   // console.log(lastKey);
   // console.log(grid);
 
+  /*
+    Checks the currently input letters in the grid against the answer grid
+  */
+
   function answerCheck() {
     return (
       grid.length === puzzleSolution.length &&
@@ -278,6 +286,12 @@ function App({ cellSize }: AppProps) {
         return cell === solutionCell;
       })
     );
+  }
+
+  function fillWithAnswers() {
+    setGrid(puzzleSolution.map((cell) => {
+      return cell === "N/A" ? "" : cell
+    }));
   }
 
   return (
@@ -391,7 +405,7 @@ function App({ cellSize }: AppProps) {
           <div
             className="cluesAcrossContainer"
             style={{
-              height: `${cellSize * (rowCount/2)}px`,
+              height: `${cellSize * (rowCount / 2)}px`,
               marginTop: `${cellSize * 2.1}px`,
             }}
           >
@@ -434,7 +448,7 @@ function App({ cellSize }: AppProps) {
           <div
             className="cluesDownContainer"
             style={{
-              height: `${cellSize * (rowCount/2)}px`,
+              height: `${cellSize * (rowCount / 2)}px`,
             }}
           >
             <h4
@@ -472,6 +486,9 @@ function App({ cellSize }: AppProps) {
             </div>
           </div>
         </div>
+        <button onClick={fillWithAnswers}>
+          Complete grid
+        </button>
       </div>
     </>
   );
