@@ -20,6 +20,7 @@
 .all {
   font-family: "Lato", sans-serif;
   display: flex;
+  align-items: flex-start;
   justify-content: center;
   align-items: center;
   padding: 5px 10px 5px 10px;
@@ -56,7 +57,7 @@
     flex-direction: column;
     display: flex;
     font-size: 0.8rem;
-    gap: 10px;
+    gap: 25px;
   }
 
   .cluesAcross,
@@ -135,6 +136,7 @@
 
   .grid {
     padding: 5px 5px 5px 5px;
+    justify-content: center;
   }
 
   .cell {

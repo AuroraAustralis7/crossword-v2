@@ -309,139 +309,153 @@ function App({ cellSize }: AppProps) {
           style={{
             padding: "5px 30px 5px 10px",
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             justifyContent: "center",
-            alignItems: "center",
           }}
         >
-          <div className="header">
-            <h2>{crosswordInfo?.title}</h2>
-            <h2>{crosswordInfo?.author}</h2>
-          </div>
-          <div
-            className="grid"
+          <div className="leftSideGroup"
             style={{
-              display: "grid",
-              gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
-              gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
-              width: "fit-content",
-              margin: "0 auto",
-            }}
-          >
-            {grid.map((cellInput, cellInputIndex) => (
-              <div
-                className="container"
-                key={`${cellInputIndex}`}
-                style={{
-                  width: `${cellSize}px`,
-                  height: `${cellSize}px`,
-                  paddingBottom: "2px",
-                }}
-              >
-                <button
-                  className="cell"
-                  disabled={puzzleSolution[cellInputIndex] === "N/A"}
+              justifyContent: "center",
+              display: "flex",
+              flexDirection: "column"
+            }}>
+            <div className="header">
+              <h2>{crosswordInfo?.title}</h2>
+              <h2>{crosswordInfo?.author}</h2>
+            </div>
+            <div
+              className="grid"
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
+                gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
+                width: "fit-content",
+                margin: "0 auto",
+              }}
+            >
+              {grid.map((cellInput, cellInputIndex) => (
+                <div
+                  className="container"
+                  key={`${cellInputIndex}`}
                   style={{
                     width: `${cellSize}px`,
                     height: `${cellSize}px`,
-                    fontSize: `${cellSize * 0.5}px`,
-                    backgroundColor:
-                      puzzleSolution[cellInputIndex] === "N/A"
-                        ? "#2e2e2e"
-                        : cellInputIndex === selectedCell
-                          ? "#4fe34f"
-                          : (vertical &&
-                                cellInputIndex % rowLength ==
-                                  selectedCell % rowLength) ||
+                    paddingBottom: "2px",
+                  }}
+                >
+                  <button
+                    className="cell"
+                    disabled={puzzleSolution[cellInputIndex] === "N/A"}
+                    style={{
+                      width: `${cellSize}px`,
+                      height: `${cellSize}px`,
+                      fontSize: `${cellSize * 0.5}px`,
+                      backgroundColor:
+                        puzzleSolution[cellInputIndex] === "N/A"
+                          ? "#2e2e2e"
+                          : cellInputIndex === selectedCell
+                            ? "#4fe34f"
+                            : (vertical &&
+                              cellInputIndex % rowLength ==
+                              selectedCell % rowLength) ||
                               (!vertical &&
                                 Math.floor(cellInputIndex / rowLength) ==
-                                  Math.floor(selectedCell / rowLength))
-                            ? "#a6f2a6"
-                            : "white",
-                  }}
-                  onClick={() => {
-                    if (cellInputIndex === selectedCell) {
-                      setVertical(!vertical);
-                    }
-                    setSelectedCell(cellInputIndex);
-                  }}
-                >
-                  {puzzleSolution[cellInputIndex] === "N/A" ? "" : cellInput}
-                </button>
-                <p
-                  className="numberOverlay"
-                  style={{
-                    fontSize: `${cellSize * 0.25}px`,
-                    userSelect: "none",
-                  }}
-                >
-                  {numberLabelGrid[cellInputIndex] != -1
-                    ? numberLabelGrid[cellInputIndex]
-                    : ""}
-                </p>
-              </div>
-            ))}
-          </div>
-          {
-            // SUBMIT BUTTON SECTION
-            // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
-          }
-          <div
-            style={{
-              paddingTop: "5px",
-              display: "flex",
-              flex: "row",
-              gap: "20px",
-              alignItems: "center",
-              justifyContent: "center",
-              verticalAlign: "middle",
-            }}
-          >
-            <button
-              className="submitButton"
-              tabIndex={-1}
-              onClick={() => {
-                if (answerCheck()) {
-                  setWon(true);
-                } else {
-                  setWon(false);
-                }
+                                Math.floor(selectedCell / rowLength))
+                              ? "#a6f2a6"
+                              : "white",
+                    }}
+                    onClick={() => {
+                      if (cellInputIndex === selectedCell) {
+                        setVertical(!vertical);
+                      }
+                      setSelectedCell(cellInputIndex);
+                    }}
+                  >
+                    {puzzleSolution[cellInputIndex] === "N/A" ? "" : cellInput}
+                  </button>
+                  <p
+                    className="numberOverlay"
+                    style={{
+                      fontSize: `${cellSize * 0.25}px`,
+                      userSelect: "none",
+                    }}
+                  >
+                    {numberLabelGrid[cellInputIndex] != -1
+                      ? numberLabelGrid[cellInputIndex]
+                      : ""}
+                  </p>
+                </div>
+              ))}
+            </div>
+            {
+              // SUBMIT BUTTON SECTION
+              // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
+            }
+            <div
+              style={{
+                paddingTop: "5px",
+                display: "flex",
+                flex: "row",
+                gap: "20px",
+                alignItems: "center",
+                justifyContent: "center",
+                verticalAlign: "middle",
               }}
             >
-              Submit
-            </button>
-            <p className="winStatus">
-              Status: {won ? "Completed" : "Not done yet"}
-            </p>
-          </div>
+              <button
+                className="submitButton"
+                tabIndex={-1}
+                onClick={() => {
+                  if (answerCheck()) {
+                    setWon(true);
+                  } else {
+                    setWon(false);
+                  }
+                }}
+              >
+                Submit
+              </button>
+              <p className="winStatus">
+                Status: {won ? "Completed" : "Not done yet"}
+              </p>
+            </div>
 
-          {
-            // MOBILE CLUE VIEWER SECTION
-            // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
-            // THIS SECTION IS NOT SUPPOSED TO BE VISIBLE ON PC AND WHEN IMPLEMENTED SHOULD HAVE "display: none" ON!!!!
-          }
-          <div
-            style={{
-              display: "flex",
-              flex: "row",
-              width: `${gridLength}`,
-            }}
-          >
-            <button
+            {
+              // MOBILE CLUE VIEWER SECTION
+              // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
+              // THIS SECTION IS NOT SUPPOSED TO BE VISIBLE ON PC AND WHEN IMPLEMENTED SHOULD HAVE "display: none" ON!!!!
+            }
+            <div
               style={{
-                width: `${gridLength / 4}`,
+                display: "flex",
+                flex: "row",
+                width: `${gridLength}`,
               }}
             >
-              <img src="/chevron-left.svg"></img>
-            </button>
-            <button>CLUE PLACEHOLDER</button>
-            <button
-              style={{
-                width: `${gridLength / 4}`,
-              }}
-            >
-              <img src="/chevron-right.svg"></img>
-            </button>
+              <button
+              >
+                <img src="/chevron-left.svg" style={{
+                  width: '20px',
+                  height: '20px',
+                  objectFit: 'contain',
+                }}></img>
+              </button>
+              <button>CLUE PLACEHOLDER</button>
+              <button
+                style={{
+                  width: `${cellSize * 1.5}`,
+                  height: `${cellSize * 1.5}`,
+                }}
+              >
+                <img src="/chevron-right.svg"
+                  style={{
+                    width: '60%',
+                    height: '60%',
+                    objectFit: 'contain',
+                  }}
+                ></img>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -456,7 +470,6 @@ function App({ cellSize }: AppProps) {
             className="cluesAcrossContainer"
             style={{
               height: `${cellSize * (rowCount / 2)}px`,
-              marginTop: `${cellSize * 2.1}px`,
             }}
           >
             <h4
@@ -535,7 +548,7 @@ function App({ cellSize }: AppProps) {
           </div>
         </div>
         <button onClick={fillWithAnswers}>Complete grid</button>
-      </div>
+      </div >
     </>
   );
 }
