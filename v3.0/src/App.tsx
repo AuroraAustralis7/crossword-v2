@@ -205,11 +205,15 @@ function App({ cellSize }: AppProps) {
       } else if (key === "ARROWUP") {
         let newCell = selectedCell;
         if (puzzleSolution[newCell] != "N/A") {
-          newCell = (newCell - rowLength + rowLength * rowCount) % (rowLength * rowCount);
+          newCell =
+            (newCell - rowLength + rowLength * rowCount) %
+            (rowLength * rowCount);
         }
         let maxSteps = 0;
         while (puzzleSolution[newCell] == "N/A" && maxSteps < rowCount) {
-          newCell = (newCell - rowLength + rowLength * rowCount) % (rowLength * rowCount);
+          newCell =
+            (newCell - rowLength + rowLength * rowCount) %
+            (rowLength * rowCount);
           maxSteps++;
         }
         setSelectedCell(newCell);
@@ -289,10 +293,14 @@ function App({ cellSize }: AppProps) {
   }
 
   function fillWithAnswers() {
-    setGrid(puzzleSolution.map((cell) => {
-      return cell === "N/A" ? "" : cell
-    }));
+    setGrid(
+      puzzleSolution.map((cell) => {
+        return cell === "N/A" ? "" : cell;
+      }),
+    );
   }
+
+  const gridLength = rowLength * cellSize;
 
   return (
     <>
@@ -300,6 +308,10 @@ function App({ cellSize }: AppProps) {
         <div
           style={{
             padding: "5px 30px 5px 10px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <div className="header">
@@ -312,6 +324,8 @@ function App({ cellSize }: AppProps) {
               display: "grid",
               gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
               gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
+              width: "fit-content",
+              margin: "0 auto",
             }}
           >
             {grid.map((cellInput, cellInputIndex) => (
@@ -337,11 +351,11 @@ function App({ cellSize }: AppProps) {
                         : cellInputIndex === selectedCell
                           ? "#4fe34f"
                           : (vertical &&
-                            cellInputIndex % rowLength ==
-                            selectedCell % rowLength) ||
-                            (!vertical &&
-                              Math.floor(cellInputIndex / rowLength) ==
-                              Math.floor(selectedCell / rowLength))
+                                cellInputIndex % rowLength ==
+                                  selectedCell % rowLength) ||
+                              (!vertical &&
+                                Math.floor(cellInputIndex / rowLength) ==
+                                  Math.floor(selectedCell / rowLength))
                             ? "#a6f2a6"
                             : "white",
                   }}
@@ -368,9 +382,19 @@ function App({ cellSize }: AppProps) {
               </div>
             ))}
           </div>
+          {
+            // SUBMIT BUTTON SECTION
+            // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
+          }
           <div
             style={{
               paddingTop: "5px",
+              display: "flex",
+              flex: "row",
+              gap: "20px",
+              alignItems: "center",
+              justifyContent: "center",
+              verticalAlign: "middle",
             }}
           >
             <button
@@ -386,21 +410,47 @@ function App({ cellSize }: AppProps) {
             >
               Submit
             </button>
-          </div>
-          <div
-            style={{
-              paddingTop: "5px",
-            }}
-          >
-            <p
-              style={{
-                userSelect: "none",
-              }}
-            >
+            <p className="winStatus">
               Status: {won ? "Completed" : "Not done yet"}
             </p>
           </div>
+
+          {
+            // MOBILE CLUE VIEWER SECTION
+            // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
+            // THIS SECTION IS NOT SUPPOSED TO BE VISIBLE ON PC AND WHEN IMPLEMENTED SHOULD HAVE "display: none" ON!!!!
+          }
+          <div
+            style={{
+              display: "flex",
+              flex: "row",
+              width: `${gridLength}`,
+            }}
+          >
+            <button
+              style={{
+                width: `${gridLength / 4}`,
+              }}
+            >
+              <img src="/chevron-left.svg"></img>
+            </button>
+            <button>CLUE PLACEHOLDER</button>
+            <button
+              style={{
+                width: `${gridLength / 4}`,
+              }}
+            >
+              <img src="/chevron-right.svg"></img>
+            </button>
+          </div>
         </div>
+
+        {
+          // CLUES SECTION START
+          // THIS COMMENT IS HERE AS A CLEAR DIVIDER SO I DO NOT GET MIXED UP.
+          // HELL. READING MY OWN CODE IS HELL.
+        }
+
         <div className="clues">
           <div
             className="cluesAcrossContainer"
@@ -417,9 +467,7 @@ function App({ cellSize }: AppProps) {
             >
               Across:
             </h4>
-            <div
-              className="cluesAcross"
-            >
+            <div className="cluesAcross">
               <ul>
                 {crosswordInfo?.clues.across.map((clue) => {
                   return (
@@ -486,9 +534,7 @@ function App({ cellSize }: AppProps) {
             </div>
           </div>
         </div>
-        <button onClick={fillWithAnswers}>
-          Complete grid
-        </button>
+        <button onClick={fillWithAnswers}>Complete grid</button>
       </div>
     </>
   );

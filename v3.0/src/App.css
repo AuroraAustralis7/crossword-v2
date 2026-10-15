@@ -6,15 +6,27 @@
   src: url("/fonts/Lato/Lato-Regular.ttf") format("truetype");
 }
 
-@media (min-width: 1024px) {
-  .all {
-    font-family: "Lato", sans-serif;
-    display: flex;
-    justify-content: center;
-    padding: 5px 10px 5px 10px;
-    color: #2e2e2e;
-  }
+.winStatus {
+  border-radius: var(--radius-md);
+  outline-width: 1px;
+  outline-color: #2e2e2e;
+  outline-style: solid;
+  padding-left: 15px;
+  padding-right: 15px;
+  user-select: "none";
+  outline-style: "solid";
+}
 
+.all {
+  font-family: "Lato", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px 5px 10px;
+  color: #2e2e2e;
+}
+
+@media (min-width: 1024px) {
   .header {
     padding: 5px 5px 5px 5px;
   }
@@ -101,15 +113,11 @@
   }
 }
 
-@media (min-width: 600px) and (max-width: 1023px) {
-  .all {
-    font-family: "Lato", sans-serif;
-    display: flex;
-    justify-content: center;
-    padding: 5px 10px 5px 10px;
-    color: #2e2e2e;
-  }
+/*
+  MEDIUM DISPLAY SECTION
+*/
 
+@media (min-width: 600px) and (max-width: 1023px) {
   .header {
     padding: 5px 5px 5px 5px;
   }
@@ -135,23 +143,6 @@
     outline-style: solid;
   }
 
-  .clues {
-    flex-direction: column;
-    display: flex;
-    font-size: 0.8rem;
-    gap: 10px;
-  }
-
-  .cluesAcross,
-  .cluesDown {
-    display: flex;
-    flex-direction: column;
-    padding: 5px 5px 5px 5px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #555555 transparent;
-  }
-
   .submitButton {
     height: 2.5rem;
     width: 6rem;
@@ -167,32 +158,22 @@
     transform: translateY(3px);
   }
 
+  .clues {
+    display: none;
+  }
+
+  .cluesAcross,
+  .cluesDown {
+    display: none;
+  }
+
   .cluesAcrossContainer,
   .cluesDownContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 15px 20px 25px 20px;
-    background-color: #2e2e2e;
-    color: white;
-    border-radius: var(--radius-3xl);
-    width: 20rem;
+    display: none;
   }
 
   .clue button {
-    width: 100%;
-    text-align: left;
-    padding: 2px 2px 2px 2px;
-    border-bottom: 1px solid #555555;
-  }
-
-  .clue button:focus {
-    border-radius: var(--radius-sm);
-    z-index: -1;
-    background-color: white;
-    color: #2e2e2e;
-    animation: scale-pulse-clue 0.5s;
+    display: none;
   }
 }
 
