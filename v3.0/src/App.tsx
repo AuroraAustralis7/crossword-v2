@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import CrosswordReader from "./crosswordReader.ts";
+import type { Clue } from "@xwordly/xword-parser";
 
 type AppProps = {
   cellSize: number;
@@ -30,6 +31,14 @@ function App({ cellSize }: AppProps) {
     null,
   );
 
+  // toolbar variables
+  // note before I leave: the intention is to create a merged array with both across and down, then use a tracked index
+  // to change what clue is displayed at a given time, which can be changed with left/right chevron buttons
+  const [mergedClues, setMergedClues] = useState<Clue[]>([]);
+  const [clueIndex, setClueIndex] = useState(0);
+
+  // mod for proper index looping
+  const mod = (n: number, d: number) => ((n % d) + d) % d;
   /*
     check crossword info from .puz file
   */
@@ -60,6 +69,13 @@ function App({ cellSize }: AppProps) {
             return row.map((cell) => cell.number ?? -1);
           }),
         );
+
+        // set big clue array with all clues
+        const across = loadingPuzzle.clues.across;
+        const down = loadingPuzzle.clues.down;
+        setMergedClues([...across, ...down])
+        console.log(mergedClues);
+
         // console.log(numberPlacer(loadingPuzzleSolution, loadingPuzzle.clues.across, loadingPuzzle.clues.down, loadingPuzzle.grid.width, loadingPuzzle.grid.height))
         console.log(loadingPuzzle);
       } catch {
@@ -313,167 +329,189 @@ function App({ cellSize }: AppProps) {
             justifyContent: "center",
           }}
         >
-          <div
-            className="leftSideGroup"
-            style={{
-              justifyContent: "center",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
+          <div style={{
+            justifyContent: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "left",
+          }}>
             <div className="header">
               <h2>{crosswordInfo?.title}</h2>
               <h2>{crosswordInfo?.author}</h2>
             </div>
             <div
-              className="grid"
               style={{
-                display: "grid",
-                gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
-                gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
-                width: "fit-content",
-                margin: "0 auto",
+                justifyContent: "center",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
-              {grid.map((cellInput, cellInputIndex) => (
-                <div
-                  className="container"
-                  key={`${cellInputIndex}`}
-                  style={{
-                    width: `${cellSize}px`,
-                    height: `${cellSize}px`,
-                    paddingBottom: "2px",
-                  }}
-                >
-                  <button
-                    className="cell"
-                    disabled={puzzleSolution[cellInputIndex] === "N/A"}
+              <div
+                className="grid"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
+                  gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
+                  width: "fit-content",
+                  margin: "0 auto",
+                }}
+              >
+                {grid.map((cellInput, cellInputIndex) => (
+                  <div
+                    className="container"
+                    key={`${cellInputIndex}`}
                     style={{
                       width: `${cellSize}px`,
                       height: `${cellSize}px`,
-                      fontSize: `${cellSize * 0.5}px`,
-                      backgroundColor:
-                        puzzleSolution[cellInputIndex] === "N/A"
-                          ? "#2e2e2e"
-                          : cellInputIndex === selectedCell
-                            ? "#4fe34f"
-                            : (vertical &&
-                                  cellInputIndex % rowLength ==
-                                    selectedCell % rowLength) ||
+                      paddingBottom: "2px",
+                    }}
+                  >
+                    <button
+                      className="cell"
+                      disabled={puzzleSolution[cellInputIndex] === "N/A"}
+                      style={{
+                        width: `${cellSize}px`,
+                        height: `${cellSize}px`,
+                        fontSize: `${cellSize * 0.5}px`,
+                        backgroundColor:
+                          puzzleSolution[cellInputIndex] === "N/A"
+                            ? "#2e2e2e"
+                            : cellInputIndex === selectedCell
+                              ? "#4fe34f"
+                              : (vertical &&
+                                cellInputIndex % rowLength ==
+                                selectedCell % rowLength) ||
                                 (!vertical &&
                                   Math.floor(cellInputIndex / rowLength) ==
-                                    Math.floor(selectedCell / rowLength))
-                              ? "#a6f2a6"
-                              : "white",
-                    }}
-                    onClick={() => {
-                      if (cellInputIndex === selectedCell) {
-                        setVertical(!vertical);
-                      }
-                      setSelectedCell(cellInputIndex);
-                    }}
-                  >
-                    {puzzleSolution[cellInputIndex] === "N/A" ? "" : cellInput}
-                  </button>
-                  <p
-                    className="numberOverlay"
+                                  Math.floor(selectedCell / rowLength))
+                                ? "#a6f2a6"
+                                : "white",
+                      }}
+                      onClick={() => {
+                        if (cellInputIndex === selectedCell) {
+                          setVertical(!vertical);
+                        }
+                        setSelectedCell(cellInputIndex);
+                      }}
+                    >
+                      {puzzleSolution[cellInputIndex] === "N/A" ? "" : cellInput}
+                    </button>
+                    <p
+                      className="numberOverlay"
+                      style={{
+                        fontSize: `${cellSize * 0.25}px`,
+                        userSelect: "none",
+                      }}
+                    >
+                      {numberLabelGrid[cellInputIndex] != -1
+                        ? numberLabelGrid[cellInputIndex]
+                        : ""}
+                    </p>
+                  </div>
+                ))}
+              </div>
+
+              {
+                // MOBILE CLUE VIEWER SECTION
+                // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
+                // THIS SECTION IS NOT SUPPOSED TO BE VISIBLE ON PC AND WHEN IMPLEMENTED SHOULD HAVE "display: none" ON!!!!
+              }
+              <div
+                style={{
+                  display: "flex",
+                  flex: "row",
+                  width: `${gridLength}px`,
+                }}
+              >
+                <button
+                  style={{
+                    width: `${cellSize * 1.5}px`,
+                    height: `${cellSize * 1.5}px`,
+                  }}
+                  onClick={() => {
+                    if (mergedClues.length > 0) {
+                      setClueIndex((index) =>
+                        mod(index - 1, mergedClues.length),
+                      );
+                    }
+                  }}
+                >
+                  <img
+                    src="/chevron-left.svg"
                     style={{
-                      fontSize: `${cellSize * 0.25}px`,
-                      userSelect: "none",
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
                     }}
-                  >
-                    {numberLabelGrid[cellInputIndex] != -1
-                      ? numberLabelGrid[cellInputIndex]
-                      : ""}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {
-              // MOBILE CLUE VIEWER SECTION
-              // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
-              // THIS SECTION IS NOT SUPPOSED TO BE VISIBLE ON PC AND WHEN IMPLEMENTED SHOULD HAVE "display: none" ON!!!!
-            }
-            <div
-              style={{
-                display: "flex",
-                flex: "row",
-                width: `${gridLength}px`,
-              }}
-            >
-              <button
-                style={{
-                  width: `${cellSize * 1.5}px`,
-                  height: `${cellSize * 1.5}px`,
-                }}
-              >
-                <img
-                  src="/chevron-left.svg"
+                  ></img>
+                </button>
+                <button
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
+                    width: `${12 * cellSize * 1.5}px`,
+                    height: `${cellSize * 1.5}px`,
                   }}
-                ></img>
-              </button>
-              <button
-                style={{
-                  width: `${12 * cellSize * 1.5}px`,
-                  height: `${cellSize * 1.5}px`,
-                }}
-              >
-                CLUE PLACEHOLDER
-              </button>
-              <button
-                style={{
-                  width: `${cellSize * 1.5}px`,
-                  height: `${cellSize * 1.5}px`,
-                }}
-              >
-                <img
-                  src="/chevron-right.svg"
+                >
+                  {mergedClues.length > 0
+                    ? `${mergedClues[clueIndex].number}. ${mergedClues[clueIndex].text}`
+                    : "Loading clue..."}
+                </button>
+                <button
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "contain",
+                    width: `${cellSize * 1.5}px`,
+                    height: `${cellSize * 1.5}px`,
                   }}
-                ></img>
-              </button>
-            </div>
+                  onClick={() => {
+                    if (mergedClues.length > 0) {
+                      setClueIndex((index) =>
+                        mod(index + 1, mergedClues.length),
+                      );
+                    }
+                  }}
+                >
+                  <img
+                    src="/chevron-right.svg"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain",
+                    }}
+                  ></img>
+                </button>
+              </div>
 
-            {
-              // SUBMIT BUTTON SECTION
-              // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
-            }
-            <div
-              style={{
-                paddingTop: "5px",
-                display: "flex",
-                flex: "row",
-                gap: "20px",
-                alignItems: "center",
-                justifyContent: "center",
-                verticalAlign: "middle",
-              }}
-            >
-              <button
-                className="submitButton"
-                tabIndex={-1}
-                onClick={() => {
-                  if (answerCheck()) {
-                    setWon(true);
-                  } else {
-                    setWon(false);
-                  }
+              {
+                // SUBMIT BUTTON SECTION
+                // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
+              }
+              <div
+                style={{
+                  paddingTop: "5px",
+                  display: "flex",
+                  flex: "row",
+                  gap: "20px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  verticalAlign: "middle",
                 }}
               >
-                Submit
-              </button>
-              <p className="winStatus">
-                Status: {won ? "Completed" : "Not done yet"}
-              </p>
+                <button
+                  className="submitButton"
+                  tabIndex={-1}
+                  onClick={() => {
+                    if (answerCheck()) {
+                      setWon(true);
+                    } else {
+                      setWon(false);
+                    }
+                  }}
+                >
+                  Submit
+                </button>
+                <p className="winStatus">
+                  Status: {won ? "Completed" : "Not done yet"}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -567,7 +605,7 @@ function App({ cellSize }: AppProps) {
           </div>
         </div>
         <button onClick={fillWithAnswers}>Complete grid</button>
-      </div>
+      </div >
     </>
   );
 }

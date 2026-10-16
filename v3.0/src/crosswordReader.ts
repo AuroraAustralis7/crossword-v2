@@ -5,6 +5,7 @@ import wsjUrl from "./assets/laughing_inside.puz?url";
 
 (globalThis as typeof globalThis & { Buffer: typeof Buffer }).Buffer = Buffer;
 
+// this function basically just reorders the clues because the parser sucks ass
 function renumberClues(puzzle: Puzzle): Puzzle {
   const { cells, width, height } = puzzle.grid;
   const originalClues = [...puzzle.clues.across, ...puzzle.clues.down];
