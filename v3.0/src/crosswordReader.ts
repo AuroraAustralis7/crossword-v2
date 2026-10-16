@@ -16,6 +16,7 @@ function renumberClues(puzzle: Puzzle): Puzzle {
   let clueIndex = 0;
   let number = 0;
 
+  // checks if a cell is null or out of bounds
   function isBlocked(row: number, col: number): boolean {
     if (row < 0 || row >= height || col < 0 || col >= width) {
       return true;
@@ -24,6 +25,7 @@ function renumberClues(puzzle: Puzzle): Puzzle {
     return cells[row][col].isBlack;
   }
 
+  // Adds a clue to a list
   function addClue(list: Clue[]) {
     const clue = originalClues[clueIndex];
 

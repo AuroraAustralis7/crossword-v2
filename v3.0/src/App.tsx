@@ -73,7 +73,7 @@ function App({ cellSize }: AppProps) {
         // set big clue array with all clues
         const across = loadingPuzzle.clues.across;
         const down = loadingPuzzle.clues.down;
-        setMergedClues([...across, ...down])
+        setMergedClues([...across, ...down]);
         console.log(mergedClues);
 
         // console.log(numberPlacer(loadingPuzzleSolution, loadingPuzzle.clues.across, loadingPuzzle.clues.down, loadingPuzzle.grid.width, loadingPuzzle.grid.height))
@@ -329,12 +329,14 @@ function App({ cellSize }: AppProps) {
             justifyContent: "center",
           }}
         >
-          <div style={{
-            justifyContent: "center",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "left",
-          }}>
+          <div
+            style={{
+              justifyContent: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "left",
+            }}
+          >
             <div className="header">
               <h2>{crosswordInfo?.title}</h2>
               <h2>{crosswordInfo?.author}</h2>
@@ -380,11 +382,11 @@ function App({ cellSize }: AppProps) {
                             : cellInputIndex === selectedCell
                               ? "#4fe34f"
                               : (vertical &&
-                                cellInputIndex % rowLength ==
-                                selectedCell % rowLength) ||
-                                (!vertical &&
-                                  Math.floor(cellInputIndex / rowLength) ==
-                                  Math.floor(selectedCell / rowLength))
+                                    cellInputIndex % rowLength ==
+                                      selectedCell % rowLength) ||
+                                  (!vertical &&
+                                    Math.floor(cellInputIndex / rowLength) ==
+                                      Math.floor(selectedCell / rowLength))
                                 ? "#a6f2a6"
                                 : "white",
                       }}
@@ -395,7 +397,9 @@ function App({ cellSize }: AppProps) {
                         setSelectedCell(cellInputIndex);
                       }}
                     >
-                      {puzzleSolution[cellInputIndex] === "N/A" ? "" : cellInput}
+                      {puzzleSolution[cellInputIndex] === "N/A"
+                        ? ""
+                        : cellInput}
                     </button>
                     <p
                       className="numberOverlay"
@@ -413,9 +417,7 @@ function App({ cellSize }: AppProps) {
               </div>
 
               {
-                // MOBILE CLUE VIEWER SECTION
-                // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
-                // THIS SECTION IS NOT SUPPOSED TO BE VISIBLE ON PC AND WHEN IMPLEMENTED SHOULD HAVE "display: none" ON!!!!
+                // BOTTOM CLUE VIEWER TOOLBAR SECTION
               }
               <div
                 style={{
@@ -430,10 +432,29 @@ function App({ cellSize }: AppProps) {
                     height: `${cellSize * 1.5}px`,
                   }}
                   onClick={() => {
+                    // you need the check on the list length otherwise nothing renders and everything breaks
+                    // basically since the crossword is loaded asynchronously there is a brief moment where this can theoretically be called and there are no clues
+                    // which breaks the entire app
+                    // the same thing applies for the right chevron button
                     if (mergedClues.length > 0) {
-                      setClueIndex((index) =>
-                        mod(index - 1, mergedClues.length),
-                      );
+                      const newIndex = mod(clueIndex - 1, mergedClues.length);
+                      setClueIndex(newIndex);
+
+                      for (let i = 0; i < grid.length; i++) {
+                        if (
+                          numberLabelGrid[i] === mergedClues[newIndex].number &&
+                          crosswordInfo != null
+                        ) {
+                          const across =
+                            newIndex < crosswordInfo.clues.across.length;
+                          if (across) {
+                            setVertical(false);
+                          } else {
+                            setVertical(true);
+                          }
+                          setSelectedCell(i);
+                        }
+                      }
                     }
                   }}
                 >
@@ -463,9 +484,24 @@ function App({ cellSize }: AppProps) {
                   }}
                   onClick={() => {
                     if (mergedClues.length > 0) {
-                      setClueIndex((index) =>
-                        mod(index + 1, mergedClues.length),
-                      );
+                      const newIndex = mod(clueIndex + 1, mergedClues.length);
+                      setClueIndex(newIndex);
+
+                      for (let i = 0; i < grid.length; i++) {
+                        if (
+                          numberLabelGrid[i] === mergedClues[newIndex].number &&
+                          crosswordInfo != null
+                        ) {
+                          const across =
+                            newIndex < crosswordInfo.clues.across.length;
+                          if (across) {
+                            setVertical(false);
+                          } else {
+                            setVertical(true);
+                          }
+                          setSelectedCell(i);
+                        }
+                      }
                     }
                   }}
                 >
@@ -605,7 +641,7 @@ function App({ cellSize }: AppProps) {
           </div>
         </div>
         <button onClick={fillWithAnswers}>Complete grid</button>
-      </div >
+      </div>
     </>
   );
 }
