@@ -61,7 +61,7 @@ function App({ cellSize }: AppProps) {
           }),
         );
         // console.log(numberPlacer(loadingPuzzleSolution, loadingPuzzle.clues.across, loadingPuzzle.clues.down, loadingPuzzle.grid.width, loadingPuzzle.grid.height))
-        // console.log(loadingPuzzle);
+        console.log(loadingPuzzle);
       } catch {
         console.error("Unable to read crossword file. Lock in.");
       }
@@ -313,12 +313,15 @@ function App({ cellSize }: AppProps) {
             justifyContent: "center",
           }}
         >
-          <div className="leftSideGroup"
+          <div
+            className="leftSideGroup"
             style={{
               justifyContent: "center",
               display: "flex",
-              flexDirection: "column"
-            }}>
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <div className="header">
               <h2>{crosswordInfo?.title}</h2>
               <h2>{crosswordInfo?.author}</h2>
@@ -356,11 +359,11 @@ function App({ cellSize }: AppProps) {
                           : cellInputIndex === selectedCell
                             ? "#4fe34f"
                             : (vertical &&
-                              cellInputIndex % rowLength ==
-                              selectedCell % rowLength) ||
-                              (!vertical &&
-                                Math.floor(cellInputIndex / rowLength) ==
-                                Math.floor(selectedCell / rowLength))
+                                  cellInputIndex % rowLength ==
+                                    selectedCell % rowLength) ||
+                                (!vertical &&
+                                  Math.floor(cellInputIndex / rowLength) ==
+                                    Math.floor(selectedCell / rowLength))
                               ? "#a6f2a6"
                               : "white",
                     }}
@@ -387,6 +390,59 @@ function App({ cellSize }: AppProps) {
                 </div>
               ))}
             </div>
+
+            {
+              // MOBILE CLUE VIEWER SECTION
+              // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
+              // THIS SECTION IS NOT SUPPOSED TO BE VISIBLE ON PC AND WHEN IMPLEMENTED SHOULD HAVE "display: none" ON!!!!
+            }
+            <div
+              style={{
+                display: "flex",
+                flex: "row",
+                width: `${gridLength}px`,
+              }}
+            >
+              <button
+                style={{
+                  width: `${cellSize * 1.5}px`,
+                  height: `${cellSize * 1.5}px`,
+                }}
+              >
+                <img
+                  src="/chevron-left.svg"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                ></img>
+              </button>
+              <button
+                style={{
+                  width: `${12 * cellSize * 1.5}px`,
+                  height: `${cellSize * 1.5}px`,
+                }}
+              >
+                CLUE PLACEHOLDER
+              </button>
+              <button
+                style={{
+                  width: `${cellSize * 1.5}px`,
+                  height: `${cellSize * 1.5}px`,
+                }}
+              >
+                <img
+                  src="/chevron-right.svg"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                  }}
+                ></img>
+              </button>
+            </div>
+
             {
               // SUBMIT BUTTON SECTION
               // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
@@ -418,43 +474,6 @@ function App({ cellSize }: AppProps) {
               <p className="winStatus">
                 Status: {won ? "Completed" : "Not done yet"}
               </p>
-            </div>
-
-            {
-              // MOBILE CLUE VIEWER SECTION
-              // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
-              // THIS SECTION IS NOT SUPPOSED TO BE VISIBLE ON PC AND WHEN IMPLEMENTED SHOULD HAVE "display: none" ON!!!!
-            }
-            <div
-              style={{
-                display: "flex",
-                flex: "row",
-                width: `${gridLength}`,
-              }}
-            >
-              <button
-              >
-                <img src="/chevron-left.svg" style={{
-                  width: '20px',
-                  height: '20px',
-                  objectFit: 'contain',
-                }}></img>
-              </button>
-              <button>CLUE PLACEHOLDER</button>
-              <button
-                style={{
-                  width: `${cellSize * 1.5}`,
-                  height: `${cellSize * 1.5}`,
-                }}
-              >
-                <img src="/chevron-right.svg"
-                  style={{
-                    width: '60%',
-                    height: '60%',
-                    objectFit: 'contain',
-                  }}
-                ></img>
-              </button>
             </div>
           </div>
         </div>
@@ -548,7 +567,7 @@ function App({ cellSize }: AppProps) {
           </div>
         </div>
         <button onClick={fillWithAnswers}>Complete grid</button>
-      </div >
+      </div>
     </>
   );
 }

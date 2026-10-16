@@ -1,8 +1,63 @@
 import { parse } from "@xwordly/xword-parser";
+import type { Clue, Puzzle } from "@xwordly/xword-parser";
 import { Buffer } from "buffer";
-import wsjUrl from "./assets/wsj.puz?url";
+import wsjUrl from "./assets/laughing_inside.puz?url";
 
 (globalThis as typeof globalThis & { Buffer: typeof Buffer }).Buffer = Buffer;
+
+function renumberClues(puzzle: Puzzle): Puzzle {
+  const { cells, width, height } = puzzle.grid;
+  const originalClues = [...puzzle.clues.across, ...puzzle.clues.down];
+
+  const across: Clue[] = [];
+  const down: Clue[] = [];
+
+  let clueIndex = 0;
+  let number = 0;
+
+  function isBlocked(row: number, col: number): boolean {
+    if (row < 0 || row >= height || col < 0 || col >= width) {
+      return true;
+    }
+
+    return cells[row][col].isBlack;
+  }
+
+  function addClue(list: Clue[]) {
+    const clue = originalClues[clueIndex];
+
+    if (!clue) {
+      throw new Error("Not enough clues for this grid.");
+    }
+
+    list.push({ number, text: clue.text });
+    clueIndex++;
+  }
+
+  for (let row = 0; row < height; row++) {
+    for (let col = 0; col < width; col++) {
+      if (isBlocked(row, col)) continue;
+
+      const startsAcross = isBlocked(row, col - 1) && !isBlocked(row, col + 1);
+
+      const startsDown = isBlocked(row - 1, col) && !isBlocked(row + 1, col);
+
+      if (!startsAcross && !startsDown) continue;
+
+      number++;
+
+      // The file stores Across before Down at each starting cell.
+      if (startsAcross) addClue(across);
+      if (startsDown) addClue(down);
+    }
+  }
+
+  if (clueIndex !== originalClues.length) {
+    throw new Error("Too many clues for this grid.");
+  }
+
+  return { ...puzzle, clues: { across, down } };
+}
 
 export default async function CrosswordReader() {
   // await receive url
@@ -21,5 +76,5 @@ export default async function CrosswordReader() {
     filename: file.name,
   });
 
-  return parsed;
+  return renumberClues(parsed);
 }
