@@ -382,11 +382,11 @@ function App({ cellSize }: AppProps) {
                             : cellInputIndex === selectedCell
                               ? "#4fe34f"
                               : (vertical &&
-                                    cellInputIndex % rowLength ==
-                                      selectedCell % rowLength) ||
-                                  (!vertical &&
-                                    Math.floor(cellInputIndex / rowLength) ==
-                                      Math.floor(selectedCell / rowLength))
+                                cellInputIndex % rowLength ==
+                                selectedCell % rowLength) ||
+                                (!vertical &&
+                                  Math.floor(cellInputIndex / rowLength) ==
+                                  Math.floor(selectedCell / rowLength))
                                 ? "#a6f2a6"
                                 : "white",
                       }}
@@ -471,6 +471,28 @@ function App({ cellSize }: AppProps) {
                   style={{
                     width: `${12 * cellSize * 1.5}px`,
                     height: `${cellSize * 1.5}px`,
+                  }}
+                  onClick={() => {
+                    if (mergedClues.length > 0) {
+                      const newIndex = mod(clueIndex, mergedClues.length);
+                      setClueIndex(newIndex);
+
+                      for (let i = 0; i < grid.length; i++) {
+                        if (
+                          numberLabelGrid[i] === mergedClues[newIndex].number &&
+                          crosswordInfo != null
+                        ) {
+                          const across =
+                            newIndex < crosswordInfo.clues.across.length;
+                          if (across) {
+                            setVertical(false);
+                          } else {
+                            setVertical(true);
+                          }
+                          setSelectedCell(i);
+                        }
+                      }
+                    }
                   }}
                 >
                   {mergedClues.length > 0
