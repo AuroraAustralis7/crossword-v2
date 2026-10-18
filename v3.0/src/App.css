@@ -65,6 +65,10 @@
   transform: translateY(3px);
 }
 
+.hg-button {
+  font-size: calc(var(--cell) * 0.5);
+}
+
 @media (min-width: 1024px) {
   .clues {
     flex-direction: column;
