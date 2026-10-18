@@ -38,8 +38,8 @@ function App() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  const SIDE = viewport.w >= 1024 ? 320 + 48 : 48;   // clues panel + chrome, matches your CSS breakpoint
-  const CHROME_H = 220;                               // header + clue toolbar + submit row
+  const SIDE = viewport.w >= 1024 ? 320 + 48 : 48;
+  const CHROME_H = 220;
 
   const cellSize = Math.max(
     18,
@@ -413,7 +413,6 @@ function App() {
   }
     */
 
-  const gridLength = rowLength * cellSize;
 
   return (
     <>
@@ -421,387 +420,395 @@ function App() {
         className="all"
         style={{
           display: "flex",
-          flexDirection: "row",
-          alignItems: "flex-start"
-        }}>
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         <div
           style={{
-            padding: "5px 30px 5px 10px",
             display: "flex",
-            flexDirection: "row",
+            flexDirection: "column",
             alignItems: "flex-start",
-          }}
-        >
+          }}>
+          <div className="header">
+            <h2>{crosswordInfo?.title}</h2>
+            <h2>{crosswordInfo?.author}</h2>
+          </div>
           <div
             style={{
-              justifyContent: "center",
               display: "flex",
-              flexDirection: "column",
-              alignItems: "left",
-            }}
-          >
-            <div className="header">
-              <h2>{crosswordInfo?.title}</h2>
-              <h2>{crosswordInfo?.author}</h2>
-            </div>
+              flexDirection: "row",
+              alignItems: "flex-start",
+              gap: "20px"
+            }}>
+            {
+              // GRID PLUS TOOLBAR AND SUBMIT
+            }
             <div
               style={{
-                justifyContent: "center",
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                gap: "10px"
+                alignItems: "stretch",
+                justifyContent: "flex-start",
               }}
             >
               <div
-                className="grid"
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
-                  gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
-                  width: "fit-content",
+                  justifyContent: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "stretch",
+                  gap: "10px",
                 }}
               >
-                {grid.map((cellInput, cellInputIndex) => (
-                  <div
-                    className="container"
-                    key={`${cellInputIndex}`}
-                    style={{
-                      width: `${cellSize}px`,
-                      height: `${cellSize}px`,
-                      paddingBottom: "2px",
-                    }}
-                  >
-                    <button
-                      className="cell"
-                      disabled={puzzleSolution[cellInputIndex] === "N/A"}
+                <div
+                  className="grid"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
+                    gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
+                    width: "fit-content",
+                  }}
+                >
+                  {grid.map((cellInput, cellInputIndex) => (
+                    <div
+                      className="container"
+                      key={`${cellInputIndex}`}
                       style={{
                         width: `${cellSize}px`,
                         height: `${cellSize}px`,
-                        fontSize: `${cellSize * 0.5}px`,
-                        backgroundColor:
-                          puzzleSolution[cellInputIndex] === "N/A"
-                            ? "#2e2e2e"
-                            : cellInputIndex === selectedCell
-                              ? "#4fe34f"
-                              : (vertical &&
-                                cellInputIndex % rowLength ==
-                                selectedCell % rowLength) ||
-                                (!vertical &&
-                                  Math.floor(cellInputIndex / rowLength) ==
-                                  Math.floor(selectedCell / rowLength))
-                                ? "#a6f2a6"
-                                : "white",
-                      }}
-                      onClick={() => {
-                        if (cellInputIndex === selectedCell) {
-                          setVertical(!vertical);
-                        }
-                        setSelectedCell(cellInputIndex);
+                        paddingBottom: "2px",
                       }}
                     >
-                      {puzzleSolution[cellInputIndex] === "N/A"
-                        ? ""
-                        : cellInput}
-                    </button>
-                    <p
-                      className="numberOverlay"
+                      <button
+                        className="cell"
+                        disabled={puzzleSolution[cellInputIndex] === "N/A"}
+                        style={{
+                          width: `${cellSize}px`,
+                          height: `${cellSize}px`,
+                          fontSize: `${cellSize * 0.5}px`,
+                          backgroundColor:
+                            puzzleSolution[cellInputIndex] === "N/A"
+                              ? "#2e2e2e"
+                              : cellInputIndex === selectedCell
+                                ? "#4fe34f"
+                                : (vertical &&
+                                  cellInputIndex % rowLength ==
+                                  selectedCell % rowLength) ||
+                                  (!vertical &&
+                                    Math.floor(cellInputIndex / rowLength) ==
+                                    Math.floor(selectedCell / rowLength))
+                                  ? "#a6f2a6"
+                                  : "white",
+                        }}
+                        onClick={() => {
+                          if (cellInputIndex === selectedCell) {
+                            setVertical(!vertical);
+                          }
+                          setSelectedCell(cellInputIndex);
+                        }}
+                      >
+                        {puzzleSolution[cellInputIndex] === "N/A"
+                          ? ""
+                          : cellInput}
+                      </button>
+                      <p
+                        className="numberOverlay"
+                        style={{
+                          fontSize: `${cellSize * 0.25}px`,
+                          userSelect: "none",
+                        }}
+                      >
+                        {numberLabelGrid[cellInputIndex] != -1
+                          ? numberLabelGrid[cellInputIndex]
+                          : ""}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {
+                  // BOTTOM CLUE VIEWER TOOLBAR SECTION
+                }
+                <div
+                  style={{
+                    display: "flex",
+                  }}
+                >
+                  <button
+                    style={{
+                      flexShrink: 0,
+                      width: cellSize * 1.5,
+                      height: cellSize * 1.5,
+                      padding: 0,
+                    }}
+                    onClick={() => {
+                      // you need the check on the list length otherwise nothing renders and everything breaks
+                      // basically since the crossword is loaded asynchronously there is a brief moment where this can theoretically be called and there are no clues
+                      // which breaks the entire app
+                      // the same thing applies for the right chevron button
+                      if (mergedClues.length > 0) {
+                        const newIndex = mod(clueIndex - 1, mergedClues.length);
+                        setClueIndex(newIndex);
+
+                        for (let i = 0; i < grid.length; i++) {
+                          if (
+                            numberLabelGrid[i] === mergedClues[newIndex].number &&
+                            crosswordInfo != null
+                          ) {
+                            const across =
+                              newIndex < crosswordInfo.clues.across.length;
+                            if (across) {
+                              setVertical(false);
+                            } else {
+                              setVertical(true);
+                            }
+                            setSelectedCell(i);
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <img
+                      src="/chevron-left.svg"
                       style={{
-                        fontSize: `${cellSize * 0.25}px`,
-                        userSelect: "none",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
                       }}
-                    >
-                      {numberLabelGrid[cellInputIndex] != -1
-                        ? numberLabelGrid[cellInputIndex]
-                        : ""}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {
-                // BOTTOM CLUE VIEWER TOOLBAR SECTION
-              }
-              <div
-                style={{
-                  display: "flex",
-                  flex: "row",
-                  width: `${gridLength}px`,
-                }}
-              >
-                <button
-                  style={{
-                    width: `${cellSize * 1.5}px`,
-                    height: `${cellSize * 1.5}px`,
-                  }}
-                  onClick={() => {
-                    // you need the check on the list length otherwise nothing renders and everything breaks
-                    // basically since the crossword is loaded asynchronously there is a brief moment where this can theoretically be called and there are no clues
-                    // which breaks the entire app
-                    // the same thing applies for the right chevron button
-                    if (mergedClues.length > 0) {
-                      const newIndex = mod(clueIndex - 1, mergedClues.length);
-                      setClueIndex(newIndex);
-
-                      for (let i = 0; i < grid.length; i++) {
-                        if (
-                          numberLabelGrid[i] === mergedClues[newIndex].number &&
-                          crosswordInfo != null
-                        ) {
-                          const across =
-                            newIndex < crosswordInfo.clues.across.length;
-                          if (across) {
-                            setVertical(false);
-                          } else {
-                            setVertical(true);
-                          }
-                          setSelectedCell(i);
-                        }
-                      }
-                    }
-                  }}
-                >
-                  <img
-                    src="/chevron-left.svg"
+                    ></img>
+                  </button>
+                  <button
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
+                      flex: 1,
+                      minWidth: 0,
                     }}
-                  ></img>
-                </button>
-                <button
-                  style={{
-                    width: `${12 * cellSize * 1.5}px`,
-                    height: `${cellSize * 1.5}px`,
-                  }}
-                  onClick={() => {
-                    if (mergedClues.length > 0) {
-                      const newIndex = mod(clueIndex, mergedClues.length);
-                      setClueIndex(newIndex);
+                    onClick={() => {
+                      if (mergedClues.length > 0) {
+                        const newIndex = mod(clueIndex, mergedClues.length);
+                        setClueIndex(newIndex);
 
-                      for (let i = 0; i < grid.length; i++) {
-                        if (
-                          numberLabelGrid[i] === mergedClues[newIndex].number &&
-                          crosswordInfo != null
-                        ) {
-                          const across =
-                            newIndex < crosswordInfo.clues.across.length;
-                          if (across) {
-                            setVertical(false);
-                          } else {
-                            setVertical(true);
+                        for (let i = 0; i < grid.length; i++) {
+                          if (
+                            numberLabelGrid[i] === mergedClues[newIndex].number &&
+                            crosswordInfo != null
+                          ) {
+                            const across =
+                              newIndex < crosswordInfo.clues.across.length;
+                            if (across) {
+                              setVertical(false);
+                            } else {
+                              setVertical(true);
+                            }
+                            setSelectedCell(i);
                           }
-                          setSelectedCell(i);
                         }
                       }
-                    }
-                  }}
-                >
-                  {mergedClues.length > 0
-                    ? `${mergedClues[clueIndex].number}. ${mergedClues[clueIndex].text}`
-                    : "Loading clue..."}
-                </button>
-                <button
-                  style={{
-                    width: `${cellSize * 1.5}px`,
-                    height: `${cellSize * 1.5}px`,
-                  }}
-                  onClick={() => {
-                    if (mergedClues.length > 0) {
-                      const newIndex = mod(clueIndex + 1, mergedClues.length);
-                      setClueIndex(newIndex);
-
-                      for (let i = 0; i < grid.length; i++) {
-                        if (
-                          numberLabelGrid[i] === mergedClues[newIndex].number &&
-                          crosswordInfo != null
-                        ) {
-                          const across =
-                            newIndex < crosswordInfo.clues.across.length;
-                          if (across) {
-                            setVertical(false);
-                          } else {
-                            setVertical(true);
-                          }
-                          setSelectedCell(i);
-                        }
-                      }
-                    }
-                  }}
-                >
-                  <img
-                    src="/chevron-right.svg"
+                    }}
+                  >
+                    {mergedClues.length > 0
+                      ? `${mergedClues[clueIndex].number}. ${mergedClues[clueIndex].text}`
+                      : "Loading clue..."}
+                  </button>
+                  <button
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "contain",
+                      flexShrink: 0,
+                      width: cellSize * 1.5,
+                      height: cellSize * 1.5,
+                      padding: 0,
                     }}
-                  ></img>
-                </button>
-              </div>
+                    onClick={() => {
+                      if (mergedClues.length > 0) {
+                        const newIndex = mod(clueIndex + 1, mergedClues.length);
+                        setClueIndex(newIndex);
 
-              {
-                // SUBMIT BUTTON SECTION
-                // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
-              }
-              <div
-                style={{
-                  display: "flex",
-                  flex: "row",
-                  gap: "20px",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  verticalAlign: "middle",
-                }}
-              >
-                <button
-                  className="submitButton"
-                  tabIndex={-1}
-                  onClick={() => {
-                    if (answerCheck()) {
-                      setWon(true);
-                    } else {
-                      setWon(false);
-                    }
+                        for (let i = 0; i < grid.length; i++) {
+                          if (
+                            numberLabelGrid[i] === mergedClues[newIndex].number &&
+                            crosswordInfo != null
+                          ) {
+                            const across =
+                              newIndex < crosswordInfo.clues.across.length;
+                            if (across) {
+                              setVertical(false);
+                            } else {
+                              setVertical(true);
+                            }
+                            setSelectedCell(i);
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <img
+                      src="/chevron-right.svg"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "contain",
+                      }}
+                    ></img>
+                  </button>
+                </div>
+
+                {
+                  // SUBMIT BUTTON SECTION
+                  // THIS DIVIDER IS HERE TO PREVENT CONFUSION WHILE READING.
+                }
+                <div
+                  style={{
+                    display: "flex",
+                    flex: "row",
+                    gap: "20px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    verticalAlign: "middle",
                   }}
                 >
-                  Submit
-                </button>
-                <p className="winStatus">
-                  Status: {won ? "Completed" : "Not done yet"}
-                </p>
-                <button
-                  onClick={() => { setKeyboardActive(!keyboardActive) }}
+                  <button
+                    className="submitButton"
+                    tabIndex={-1}
+                    onClick={() => {
+                      if (answerCheck()) {
+                        setWon(true);
+                      } else {
+                        setWon(false);
+                      }
+                    }}
+                  >
+                    Submit
+                  </button>
+                  <p className="winStatus">
+                    Status: {won ? "Completed" : "Not done yet"}
+                  </p>
+                  <button
+                    onClick={() => { setKeyboardActive(!keyboardActive) }}
+                    style={{
+                      width: `${cellSize}px`,
+                      height: `${cellSize}px`,
+                    }}
+                  > { /* keyboard toggle button */}
+                    <img src={keyboardActive ? "keyboard-shown.svg" : "keyboard-hidden.svg"}></img>
+                  </button>
+                </div>
+
+                {
+                  // FIXED KEYBOARD
+                }
+                <div style={{
+                  display: keyboardActive ? "block" : "none",
+                  width: "100%"
+                }}>
+                  <Keyboard
+                    className="Keyboard"
+                    keyboardRef={r => (keyboard.current = r)}
+                    layout={LAYOUTS}
+                    layoutName={layout}
+                    mergeDisplay
+                    display={{
+                      "{bksp}": "⌫",
+                      "{enter}": "↵",
+                      "{rev}": "🔄︎"
+                    }}
+                    onChange={onChange}
+                    onKeyPress={onKeyPress}>
+                  </Keyboard>
+                </div>
+              </div>
+            </div>
+
+            {
+              // CLUES SECTION START
+              // THIS COMMENT IS HERE AS A CLEAR DIVIDER SO I DO NOT GET MIXED UP.
+              // HELL. READING MY OWN CODE IS HELL.
+            }
+
+            <div className="clues" style={{ '--height': `${cellSize * rowCount}px` } as React.CSSProperties}>
+              <div
+                className="cluesAcrossContainer"
+              >
+                <h4
                   style={{
-                    width: `${cellSize}px`,
-                    height: `${cellSize}px`,
+                    textAlign: "center",
+                    marginBottom: "5px",
                   }}
-                > { /* keyboard toggle button */}
-                  <img src={keyboardActive ? "keyboard-shown.svg" : "keyboard-hidden.svg"}></img>
-                </button>
+                >
+                  Across:
+                </h4>
+                <div className="cluesAcross">
+                  <ul>
+                    {crosswordInfo?.clues.across.map((clue) => {
+                      return (
+                        <li className="clue">
+                          <button
+                            tabIndex={-1}
+                            onClick={() => {
+                              let correctIndex = 0;
+                              for (let i = 0; i < numberLabelGrid.length; i++) {
+                                if (numberLabelGrid[i] == clue.number) {
+                                  correctIndex = i;
+                                }
+                              }
+                              setVertical(false);
+                              setSelectedCell(correctIndex);
+                            }}
+                          >
+                            {clue.number}: {clue.text}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               </div>
-
-              {
-                // FIXED KEYBOARD
-              }
-              <div style={{
-                display: keyboardActive ? "block" : "none",
-                width: `${gridLength}px`
-              }}>
-                <Keyboard
-                  className="Keyboard"
-                  keyboardRef={r => (keyboard.current = r)}
-                  layout={LAYOUTS}
-                  layoutName={layout}
-                  mergeDisplay
-                  display={{
-                    "{bksp}": "⌫",
-                    "{enter}": "↵",
-                    "{rev}": "🔄︎"
+              <div
+                className="cluesDownContainer"
+              >
+                <h4
+                  style={{
+                    textAlign: "center",
+                    marginBottom: "5px",
                   }}
-                  onChange={onChange}
-                  onKeyPress={onKeyPress}>
-                </Keyboard>
+                >
+                  Down:
+                </h4>
+                <div className="cluesDown">
+                  <ul>
+                    {crosswordInfo?.clues.down.map((clue) => {
+                      return (
+                        <li className="clue">
+                          <button
+                            tabIndex={-1}
+                            onClick={() => {
+                              let correctIndex = 0;
+                              for (let i = 0; i < numberLabelGrid.length; i++) {
+                                if (numberLabelGrid[i] == clue.number) {
+                                  correctIndex = i;
+                                }
+                              }
+                              setVertical(true);
+                              setSelectedCell(correctIndex);
+                            }}
+                          >
+                            {clue.number}: {clue.text}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+          {
+            // CLUES SECTION END
+          }
 
-        {
-          // CLUES SECTION START
-          // THIS COMMENT IS HERE AS A CLEAR DIVIDER SO I DO NOT GET MIXED UP.
-          // HELL. READING MY OWN CODE IS HELL.
-        }
-
-        <div
-          className="clues"
-          style={{ padding: `${cellSize * 2}px 0 0 0`, }}
-        >
-          <div
-            className="cluesAcrossContainer"
-            style={{
-              height: `${cellSize * (rowCount / 2)}px`,
-            }}
-          >
-            <h4
-              style={{
-                textAlign: "center",
-                marginBottom: "5px",
-              }}
-            >
-              Across:
-            </h4>
-            <div className="cluesAcross">
-              <ul>
-                {crosswordInfo?.clues.across.map((clue) => {
-                  return (
-                    <li className="clue">
-                      <button
-                        tabIndex={-1}
-                        onClick={() => {
-                          let correctIndex = 0;
-                          for (let i = 0; i < numberLabelGrid.length; i++) {
-                            if (numberLabelGrid[i] == clue.number) {
-                              correctIndex = i;
-                            }
-                          }
-                          setVertical(false);
-                          setSelectedCell(correctIndex);
-                        }}
-                      >
-                        {clue.number}: {clue.text}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
-          <div
-            className="cluesDownContainer"
-            style={{
-              height: `${cellSize * (rowCount / 2)}px`,
-            }}
-          >
-            <h4
-              style={{
-                textAlign: "center",
-                marginBottom: "5px",
-              }}
-            >
-              Down:
-            </h4>
-            <div className="cluesDown">
-              <ul>
-                {crosswordInfo?.clues.down.map((clue) => {
-                  return (
-                    <li className="clue">
-                      <button
-                        tabIndex={-1}
-                        onClick={() => {
-                          let correctIndex = 0;
-                          for (let i = 0; i < numberLabelGrid.length; i++) {
-                            if (numberLabelGrid[i] == clue.number) {
-                              correctIndex = i;
-                            }
-                          }
-                          setVertical(true);
-                          setSelectedCell(correctIndex);
-                        }}
-                      >
-                        {clue.number}: {clue.text}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
+          {
+            // <button onClick={fillWithAnswers}>Complete grid</button>
+          }
         </div>
-        {
-          // <button onClick={fillWithAnswers}>Complete grid</button>
-        }
       </div>
     </>
   );
