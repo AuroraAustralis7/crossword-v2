@@ -386,6 +386,7 @@ function App({ cellSize }: AppProps) {
     );
   }
 
+  /* CURRENTLY UNUSED FUNCTION THAT FILLS THE WHOLE GRID
   function fillWithAnswers() {
     setGrid(
       puzzleSolution.map((cell) => {
@@ -393,6 +394,7 @@ function App({ cellSize }: AppProps) {
       }),
     );
   }
+    */
 
   const gridLength = rowLength * cellSize;
 
