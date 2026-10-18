@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./App.css";
 import CrosswordReader from "./crosswordReader.ts";
 import type { Clue } from "@xwordly/xword-parser";
+import Keyboard, { type KeyboardReactInterface } from 'react-simple-keyboard';
+import "react-simple-keyboard/build/css/index.css";
 
 type AppProps = {
   cellSize: number;
@@ -31,14 +33,75 @@ function App({ cellSize }: AppProps) {
     null,
   );
 
-  // toolbar variables
+  // toolbar 
   // note before I leave: the intention is to create a merged array with both across and down, then use a tracked index
   // to change what clue is displayed at a given time, which can be changed with left/right chevron buttons
   const [mergedClues, setMergedClues] = useState<Clue[]>([]);
   const [clueIndex, setClueIndex] = useState(0);
 
-  // mod for proper index looping
+  // modulo for proper index looping
   const mod = (n: number, d: number) => ((n % d) + d) % d;
+
+  // keyboard code ripped straight from docs lmao
+  const [keyboardActive, setKeyboardActive] = useState(false);
+
+  const [input, setInput] = useState("");
+  const keyboard = useRef<KeyboardReactInterface | null>(null);
+
+  const LAYOUTS = {
+    default: [
+      "{tab} q w e r t y u i o p",
+      "a s d f g h j k l {bksp}",
+      "{shift} z x c v b n m {rev} {enter}",
+    ],
+    shift: [
+      "{tab} Q W E R T Y U I O P",
+      "A S D F G H J K L {bksp}",
+      "{shift} Z X C V B N M {rev} {enter}",
+    ],
+  };
+
+  const [layout, setLayout] = useState("default");
+
+  const onChange = (newInput: string) => {
+    setInput(newInput);
+    // console.log("Input changed", newInput);
+  };
+
+  const handleShift = () => {
+    const newLayoutName = layout === "default" ? "shift" : "default";
+    setLayout(newLayoutName);
+  };
+
+  // Send on-screen keys through the same handler the physical keyboard uses.
+  const dispatchKey = (key: string) => {
+    window.dispatchEvent(new KeyboardEvent("keydown", { key }));
+  };
+
+  const onKeyPress = (button: string) => {
+    if (button === "{shift}") {
+      handleShift();
+      return;
+    }
+    if (button === "{rev}") {
+      setVertical(!vertical);
+      return;
+    }
+
+    const physicalKey =
+      button === "{bksp}"
+        ? "Backspace"
+        : button === "{enter}"
+          ? "Enter"
+          : button === "{tab}"
+            ? "Tab"
+            : button === "{space}"
+              ? " "
+              : button;
+
+    dispatchKey(physicalKey);
+  };
+
   /*
     check crossword info from .puz file
   */
@@ -70,7 +133,7 @@ function App({ cellSize }: AppProps) {
           }),
         );
 
-        // set big clue array with all clues
+        // set big clue array with a  ll clues
         const across = loadingPuzzle.clues.across;
         const down = loadingPuzzle.clues.down;
         setMergedClues([...across, ...down]);
@@ -91,6 +154,9 @@ function App({ cellSize }: AppProps) {
     */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Nothing is typed until the puzzle has actually loaded.
+      if (!rowLength || !rowCount) return;
+
       let key = e.key.toUpperCase();
       if (/^[a-z]$/i.test(e.key)) {
         setLastKey(key);
@@ -271,7 +337,7 @@ function App({ cellSize }: AppProps) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [selectedCell, vertical]);
+  }, [selectedCell, vertical, puzzleSolution, rowLength, rowCount]);
 
   /*
       This useEffect() hook clears the most recent key
@@ -288,6 +354,18 @@ function App({ cellSize }: AppProps) {
       clearTimeout(timeoutId);
     };
   }, [lastKey]);
+
+  useEffect(() => {
+    if (input === "") return;
+
+    const timeoutId = setTimeout(() => {
+      setInput("");
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [input]);
 
   // console.log(lastKey);
   // console.log(grid);
@@ -320,13 +398,19 @@ function App({ cellSize }: AppProps) {
 
   return (
     <>
-      <div className="all">
+      <div
+        className="all"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "flex-start"
+        }}>
         <div
           style={{
             padding: "5px 30px 5px 10px",
             display: "flex",
             flexDirection: "row",
-            justifyContent: "center",
+            alignItems: "flex-start",
           }}
         >
           <div
@@ -347,6 +431,7 @@ function App({ cellSize }: AppProps) {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                gap: "10px"
               }}
             >
               <div
@@ -356,7 +441,6 @@ function App({ cellSize }: AppProps) {
                   gridTemplateColumns: `repeat(${rowLength}, ${cellSize}px)`,
                   gridTemplateRows: `repeat(${rowCount}, ${cellSize}px)`,
                   width: "fit-content",
-                  margin: "0 auto",
                 }}
               >
                 {grid.map((cellInput, cellInputIndex) => (
@@ -544,7 +628,6 @@ function App({ cellSize }: AppProps) {
               }
               <div
                 style={{
-                  paddingTop: "5px",
                   display: "flex",
                   flex: "row",
                   gap: "20px",
@@ -569,6 +652,38 @@ function App({ cellSize }: AppProps) {
                 <p className="winStatus">
                   Status: {won ? "Completed" : "Not done yet"}
                 </p>
+                <button
+                  onClick={() => { setKeyboardActive(!keyboardActive) }}
+                  style={{
+                    width: `${cellSize}px`,
+                    height: `${cellSize}px`,
+                  }}
+                > { /* keyboard toggle button */}
+                  <img src={keyboardActive ? "keyboard-shown.svg" : "keyboard-hidden.svg"}></img>
+                </button>
+              </div>
+
+              {
+                // FIXED KEYBOARD
+              }
+              <div style={{
+                display: keyboardActive ? "block" : "none",
+                width: `${gridLength}px`
+              }}>
+                <Keyboard
+                  className="Keyboard"
+                  keyboardRef={r => (keyboard.current = r)}
+                  layout={LAYOUTS}
+                  layoutName={layout}
+                  mergeDisplay
+                  display={{
+                    "{bksp}": "⌫",
+                    "{enter}": "↵",
+                    "{rev}": "🔄︎"
+                  }}
+                  onChange={onChange}
+                  onKeyPress={onKeyPress}>
+                </Keyboard>
               </div>
             </div>
           </div>
@@ -580,7 +695,10 @@ function App({ cellSize }: AppProps) {
           // HELL. READING MY OWN CODE IS HELL.
         }
 
-        <div className="clues">
+        <div
+          className="clues"
+          style={{ padding: `${cellSize * 2}px 0 0 0`, }}
+        >
           <div
             className="cluesAcrossContainer"
             style={{
@@ -662,7 +780,9 @@ function App({ cellSize }: AppProps) {
             </div>
           </div>
         </div>
-        <button onClick={fillWithAnswers}>Complete grid</button>
+        {
+          // <button onClick={fillWithAnswers}>Complete grid</button>
+        }
       </div>
     </>
   );

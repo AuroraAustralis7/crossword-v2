@@ -11,8 +11,6 @@
   outline-width: 1px;
   outline-color: #2e2e2e;
   outline-style: solid;
-  padding-left: 15px;
-  padding-right: 15px;
   user-select: "none";
   outline-style: "solid";
 }
@@ -27,32 +25,47 @@
   color: #2e2e2e;
 }
 
+.header {
+  padding: 5px;
+}
+
+.container {
+  position: relative;
+}
+
+.numberOverlay {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  margin: 0;
+}
+
+.grid {
+  padding: 5px 5px 5px 5px;
+}
+
+.cell {
+  outline-width: 1px;
+  outline-color: #2e2e2e;
+  outline-style: solid;
+}
+
+.submitButton {
+  height: 2.5rem;
+  width: 6rem;
+  background-color: #2e2e2e;
+  box-shadow: 0 5px #666;
+  color: white;
+  border-radius: var(--radius-3xl);
+}
+
+.submitButton:active {
+  background-color: #2e2e2e;
+  box-shadow: 0 3px #666;
+  transform: translateY(3px);
+}
+
 @media (min-width: 1024px) {
-  .header {
-    padding: 5px 5px 5px 5px;
-  }
-
-  .container {
-    position: relative;
-  }
-
-  .numberOverlay {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    margin: 0;
-  }
-
-  .grid {
-    padding: 5px 5px 5px 5px;
-  }
-
-  .cell {
-    outline-width: 1px;
-    outline-color: #2e2e2e;
-    outline-style: solid;
-  }
-
   .clues {
     flex-direction: column;
     display: flex;
@@ -68,21 +81,6 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #555555 transparent;
-  }
-
-  .submitButton {
-    height: 2.5rem;
-    width: 6rem;
-    background-color: #2e2e2e;
-    box-shadow: 0 5px #666;
-    color: white;
-    border-radius: var(--radius-3xl);
-  }
-
-  .submitButton:active {
-    background-color: #2e2e2e;
-    box-shadow: 0 3px #666;
-    transform: translateY(3px);
   }
 
   .cluesAcrossContainer,
@@ -118,47 +116,7 @@
   MEDIUM DISPLAY SECTION
 */
 
-@media (min-width: 600px) and (max-width: 1023px) {
-  .header {
-    padding: 5px 5px 5px 5px;
-  }
-
-  .container {
-    position: relative;
-  }
-
-  .numberOverlay {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    margin: 0;
-  }
-
-  .grid {
-    padding: 5px 5px 5px 5px;
-    justify-content: center;
-  }
-
-  .cell {
-    outline-width: 1px;
-    outline-color: #2e2e2e;
-    outline-style: solid;
-  }
-
-  .submitButton {
-    height: 2.5rem;
-    width: 6rem;
-    background-color: #2e2e2e;
-    box-shadow: 0 5px #666;
-    color: white;
-    border-radius: var(--radius-3xl);
-  }
-
-  .submitButton:active {
-    background-color: #2e2e2e;
-    box-shadow: 0 3px #666;
-    transform: translateY(3px);
-  }
+@media (max-width: 1023px) {
 
   .clues {
     display: none;
