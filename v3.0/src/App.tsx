@@ -431,7 +431,7 @@ function App() {
             flexDirection: "column",
             alignItems: "flex-start",
           }}>
-          <div className="header">
+          <div className="header" style={{ fontSize: "1.5rem" }}>
             <h2>{crosswordInfo?.title}</h2>
             <h2>{crosswordInfo?.author}</h2>
           </div>

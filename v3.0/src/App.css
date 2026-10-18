@@ -109,12 +109,16 @@
     min-height: 0;
   }
 
+  .clue {
+    font-size: 1rem;
+  }
+
   .clue button {
     width: 100%;
     text-align: left;
     padding: 2px 2px 2px 2px;
     border-bottom: 1px solid #555555;
-    font-size: clamp(0.75rem, 2.2cqi, 0.95rem);
+    font-size: 1rem;
   }
 
   .clue button:focus {
@@ -167,12 +171,16 @@
     min-height: 0;
   }
 
+  .clue {
+    font-size: 1rem;
+  }
+
   .clue button {
     width: 100%;
     text-align: left;
     padding: 2px 2px 2px 2px;
     border-bottom: 1px solid #555555;
-    font-size: clamp(0.75rem, 2.2cqi, 0.95rem);
+    font-size: 1rem;
   }
 
   .clue button:focus {
