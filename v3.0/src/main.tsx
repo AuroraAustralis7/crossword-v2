@@ -6,6 +6,6 @@ const cellSize = 30;
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App cellSize={cellSize} />
+    <App />
   </StrictMode>,
 );

@@ -5,11 +5,7 @@ import type { Clue } from "@xwordly/xword-parser";
 import Keyboard, { type KeyboardReactInterface } from 'react-simple-keyboard';
 import "react-simple-keyboard/build/css/index.css";
 
-type AppProps = {
-  cellSize: number;
-};
-
-function App({ cellSize }: AppProps) {
+function App() {
   const [won, setWon] = useState(false);
   const [selectedCell, setSelectedCell] = useState(0);
 
@@ -33,9 +29,30 @@ function App({ cellSize }: AppProps) {
     null,
   );
 
+  // automatically scale cellSize with viewport, why did i make everything dependent on cellSize aah :(
+  const [viewport, setViewport] = useState({ w: window.innerWidth, h: window.innerHeight });
+
+  useEffect(() => {
+    const onResize = () => setViewport({ w: window.innerWidth, h: window.innerHeight });
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const SIDE = viewport.w >= 1024 ? 320 + 48 : 48;   // clues panel + chrome, matches your CSS breakpoint
+  const CHROME_H = 220;                               // header + clue toolbar + submit row
+
+  const cellSize = Math.max(
+    18,
+    Math.min(
+      44,
+      Math.floor(Math.min(
+        (viewport.w - SIDE) / (rowLength || 15),
+        (viewport.h - CHROME_H) / (rowCount || 15),
+      )),
+    ),
+  );
+
   // toolbar 
-  // note before I leave: the intention is to create a merged array with both across and down, then use a tracked index
-  // to change what clue is displayed at a given time, which can be changed with left/right chevron buttons
   const [mergedClues, setMergedClues] = useState<Clue[]>([]);
   const [clueIndex, setClueIndex] = useState(0);
 
